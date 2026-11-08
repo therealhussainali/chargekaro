@@ -1,0 +1,2186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#08090C">
+  <title>ChargeKaro — Peer-to-Peer EV Charging Network</title>
+
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- Leaflet CSS & JS (free, open-source interactive maps) -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['"Plus Jakarta Sans"', 'system-ui', '-apple-system', 'sans-serif'],
+            display: ['"Space Grotesk"', 'sans-serif'],
+          },
+          colors: {
+            brand: {
+              yellow: '#FFD54A',
+              yellowHover: '#FFE07A',
+              orange: '#FF7A45',
+              orangeHover: '#FF9366',
+              dark: '#0B0D11',
+              surface: '#12151D',
+              surfaceHover: '#181C26',
+              surfaceLight: '#212736',
+              border: 'rgba(255, 255, 255, 0.07)',
+              borderActive: 'rgba(255, 213, 74, 0.4)',
+              muted: '#98A2B3',
+              green: '#34D399',
+            }
+          },
+          boxShadow: {
+            'glow-yellow': '0 10px 30px -8px rgba(255, 213, 74, 0.45)',
+            'glow-orange': '0 10px 30px -8px rgba(255, 122, 69, 0.4)',
+            'sheet': '0 -20px 60px rgba(0, 0, 0, 0.7)',
+            'card': '0 10px 30px -12px rgba(0, 0, 0, 0.5)',
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    :root {
+      --yellow: #FFD54A;
+      --yellow-hover: #FFE07A;
+      --orange: #FF7A45;
+      --green: #34D399;
+      --surface: #12151D;
+      --surface-2: #171B24;
+      --line: rgba(255, 255, 255, 0.07);
+      --muted: #98A2B3;
+    }
+
+    html { -webkit-text-size-adjust: 100%; }
+
+    body {
+      background: #08090C;
+      color: #E8EBF2;
+      font-feature-settings: "ss01" 1;
+    }
+
+    /* Scrollbars */
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.12); border-radius: 9999px; }
+    ::-webkit-scrollbar-thumb:hover { background: rgba(255,213,74,0.6); }
+    .no-scrollbar::-webkit-scrollbar { display: none; }
+    .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+    /* ---------- Shared components ---------- */
+    .panel {
+      background: #10131A;
+      border: 1px solid var(--line);
+      border-radius: 24px;
+    }
+
+    .soft-card {
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: 18px;
+    }
+
+    .tab-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 7px 15px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--muted);
+      transition: all .2s ease;
+      white-space: nowrap;
+    }
+    .tab-btn:hover { color: #fff; }
+    .tab-btn.is-active { background: var(--yellow); color: #0B0D11; box-shadow: 0 4px 14px -4px rgba(255,213,74,.5); }
+    #tab-host-btn.is-active { background: var(--orange); color: #fff; box-shadow: 0 4px 14px -4px rgba(255,122,69,.5); }
+
+    .chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 8px 14px;
+      border-radius: 12px;
+      font-size: 12px;
+      font-weight: 600;
+      color: #B6BECF;
+      background: rgba(18, 21, 29, 0.92);
+      border: 1px solid var(--line);
+      white-space: nowrap;
+      transition: all .18s ease;
+    }
+    .chip:hover { color: #fff; border-color: rgba(255,255,255,0.16); }
+    .chip.is-active { background: var(--yellow); color: #0B0D11; border-color: transparent; font-weight: 800; }
+
+    .dur-btn {
+      padding: 11px 6px;
+      border-radius: 14px;
+      font-size: 12px;
+      font-weight: 700;
+      color: #B6BECF;
+      background: var(--surface);
+      border: 1px solid var(--line);
+      transition: all .18s ease;
+      text-align: center;
+    }
+    .dur-btn:hover { background: var(--surface-2); color: #fff; }
+    .dur-btn.is-active { background: var(--yellow); color: #0B0D11; border-color: transparent; box-shadow: 0 4px 14px -6px rgba(255,213,74,.6); }
+
+    .role-seg-btn {
+      flex: 1;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 10px 14px;
+      border-radius: 14px;
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--muted);
+      transition: all .2s ease;
+    }
+    .role-seg-btn:hover { color: #fff; }
+    .role-seg-btn.is-active { background: var(--yellow); color: #0B0D11; }
+    #side-btn-host.is-active { background: var(--orange); color: #fff; }
+
+    .btn-primary {
+      background: var(--yellow);
+      color: #0B0D11;
+      font-weight: 800;
+      border-radius: 16px;
+      transition: all .18s ease;
+    }
+    .btn-primary:hover { background: var(--yellow-hover); }
+    .btn-primary:active { transform: scale(.985); }
+
+    .status-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 12px;
+      border-radius: 999px;
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: .04em;
+      transition: all .2s ease;
+    }
+    .status-pill.is-online { background: rgba(52, 211, 153, .14); color: var(--green); }
+    .status-pill.is-offline { background: rgba(248, 113, 113, .14); color: #F87171; }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      padding: 4px 10px;
+      border-radius: 999px;
+      font-size: 10px;
+      font-weight: 800;
+      letter-spacing: .03em;
+      background: rgba(255, 213, 74, .14);
+      color: var(--yellow);
+    }
+    .badge.is-live { background: rgba(52, 211, 153, .16); color: var(--green); }
+
+    #btn-toggle-charge.is-charging { background: var(--orange); color: #fff; }
+    #btn-toggle-charge.is-charging i { color: #fff; }
+
+    .live-dot { animation: live-indicator 2s infinite ease-in-out; }
+    @keyframes live-indicator {
+      0%, 100% { transform: scale(1); opacity: 1; }
+      50% { transform: scale(1.35); opacity: .55; }
+    }
+
+    .sheet-transition { transition: transform .38s cubic-bezier(.16, 1, .3, 1); }
+    .btn-press:active { transform: scale(.97); }
+
+    /* ---------- Leaflet map ---------- */
+    #driver-map {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 1;
+      background: #10131A;
+    }
+    .leaflet-container { font-family: inherit !important; background: #10131A !important; }
+    .leaflet-control-zoom { display: none !important; }
+    .leaflet-control-attribution {
+      background: rgba(11, 13, 17, 0.8) !important;
+      color: #64748B !important;
+      font-size: 9px !important;
+      border-radius: 6px;
+      padding: 2px 6px !important;
+      margin-bottom: 96px !important;
+      margin-left: 12px !important;
+      margin-right: auto !important;
+      backdrop-filter: blur(6px);
+    }
+    .leaflet-control-attribution a { color: #94A3B8 !important; }
+
+    /* Darken the basemap so it sits calmly behind the UI */
+    .leaflet-tile-pane { filter: brightness(.6) contrast(1.05) saturate(.75); }
+    .leaflet-labels-pane { filter: none; }
+
+    /* Station pins */
+    .station-pin {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      transition: transform .25s cubic-bezier(.34, 1.56, .64, 1);
+      cursor: pointer;
+      transform-origin: bottom center;
+    }
+    .station-pin:hover, .station-pin.is-active { transform: scale(1.12) translateY(-4px); z-index: 9999 !important; }
+
+    .station-pin-bubble {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      white-space: nowrap;
+      background: #12151D;
+      border: 1px solid rgba(255, 213, 74, .6);
+      padding: 6px 10px;
+      border-radius: 14px;
+      box-shadow: 0 10px 26px rgba(0, 0, 0, .6);
+    }
+    .station-pin.is-fast .station-pin-bubble { border-color: rgba(255, 122, 69, .7); }
+    .station-pin .pin-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--green); }
+    .station-pin .pin-kw { font-family: 'Space Grotesk', sans-serif; font-size: 12px; font-weight: 700; color: #fff; line-height: 1; }
+    .station-pin .pin-price { font-size: 10px; font-weight: 700; color: #98A2B3; line-height: 1; }
+    .station-pin-tail {
+      width: 8px;
+      height: 8px;
+      background: #12151D;
+      border-right: 1px solid rgba(255, 213, 74, .6);
+      border-bottom: 1px solid rgba(255, 213, 74, .6);
+      transform: rotate(45deg);
+      margin: -5px auto 0;
+      box-shadow: 2px 2px 4px rgba(0,0,0,.35);
+    }
+    .station-pin.is-fast .station-pin-tail { border-color: rgba(255, 122, 69, .7); }
+
+    /* User marker */
+    .user-pin { position: relative; display: flex; align-items: center; justify-content: center; }
+    .user-pin::after {
+      content: '';
+      position: absolute;
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      background: rgba(255, 213, 74, .22);
+      animation: pulse-ring 2.2s infinite ease-out;
+      pointer-events: none;
+    }
+    .user-pin-core {
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      background: var(--yellow);
+      border: 3px solid #0B0D11;
+      box-shadow: 0 0 0 4px rgba(255, 213, 74, .18);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      z-index: 1;
+    }
+    .user-pin-core::after { content: ''; width: 7px; height: 7px; border-radius: 50%; background: #0B0D11; }
+    @keyframes pulse-ring {
+      0% { transform: scale(.55); opacity: .9; }
+      100% { transform: scale(1.9); opacity: 0; }
+    }
+
+    /* Range input */
+    input[type="range"] {
+      -webkit-appearance: none;
+      appearance: none;
+      height: 6px;
+      border-radius: 999px;
+      background: #212736;
+      outline: none;
+    }
+    input[type="range"]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      background: var(--yellow);
+      border: 3px solid #0B0D11;
+      box-shadow: 0 0 0 3px rgba(255, 213, 74, .2);
+      cursor: pointer;
+    }
+    input[type="range"]::-moz-range-thumb {
+      width: 20px; height: 20px; border-radius: 50%;
+      background: var(--yellow); border: 3px solid #0B0D11; cursor: pointer;
+    }
+
+    input[type="time"]::-webkit-calendar-picker-indicator { filter: invert(.7); }
+    textarea { resize: none; }
+
+    .onboarding-choice {
+      display: flex;
+      align-items: flex-start;
+      gap: .75rem;
+      width: 100%;
+      padding: 1rem;
+      text-align: left;
+      border: 1px solid rgba(255,255,255,.08);
+      border-radius: 1.25rem;
+      background: #14171F;
+      transition: border-color .2s ease, background .2s ease, transform .2s ease;
+    }
+    .onboarding-choice:hover { border-color: rgba(255,213,74,.45); background: #181C26; transform: translateY(-1px); }
+    .onboarding-choice.is-selected { border-color: var(--yellow); background: rgba(255,213,74,.1); }
+    .onboarding-choice.is-selected.host-choice { border-color: var(--orange); background: rgba(255,122,69,.1); }
+    .route-stop {
+      display: flex;
+      align-items: center;
+      gap: .625rem;
+      border: 1px solid rgba(255,255,255,.08);
+      border-radius: .875rem;
+      background: rgba(18,21,29,.95);
+      padding: .7rem .8rem;
+    }
+    .route-stop input { min-width: 0; width: 100%; background: transparent; color: white; outline: none; font-size: 12px; }
+    .route-stop input::placeholder { color: #64748B; }
+    .amenity-chip { cursor: pointer; }
+    .amenity-chip:has(input:checked) { border-color: var(--orange); background: rgba(255,122,69,.12); color: white; }
+
+    /* ---------- Responsive polish ---------- */
+    @media (min-width: 1024px) {
+      body {
+        background:
+          radial-gradient(60% 70% at 75% 15%, rgba(255, 213, 74, .045), transparent 70%),
+          #08090C;
+      }
+
+      main {
+        max-width: 80rem;
+        gap: 2.5rem;
+        padding-top: 3.5rem;
+        padding-bottom: 3.5rem;
+      }
+
+      main > aside {
+        width: 18rem;
+        max-width: 18rem;
+      }
+
+      main > aside > div:first-child {
+        padding: 1.25rem 0;
+      }
+
+      main > aside.space-y-6 {
+        gap: 1.5rem;
+      }
+
+      main > aside.space-y-6 > * + * {
+        margin-top: 1.5rem;
+      }
+
+      main > aside .space-y-4 {
+        gap: .75rem;
+      }
+
+      main > aside .space-y-3 > * + * {
+        margin-top: .625rem;
+      }
+
+      main > div.relative.h-\[820px\] {
+        height: min(860px, calc(100vh - 7rem));
+        max-width: 32rem;
+        border-radius: 2.25rem;
+        padding: .5rem;
+      }
+    }
+
+    @media (max-width: 639px) {
+      main {
+        gap: 2rem;
+        padding: 1.5rem 1rem 2rem;
+      }
+
+      main > div.relative.h-\[820px\] {
+        height: min(820px, calc(100vh - 3rem));
+        border-radius: 2.25rem;
+        padding: .5rem;
+      }
+    }
+  </style>
+</head>
+<body class="min-h-screen font-sans antialiased">
+
+  <!-- Ambient background glow -->
+  <div class="pointer-events-none fixed inset-0 -z-10" style="background: radial-gradient(55% 45% at 15% 0%, rgba(255,213,74,.07), transparent 60%), radial-gradient(50% 50% at 88% 100%, rgba(255,122,69,.06), transparent 60%);"></div>
+
+  <!-- ========================================================================= -->
+  <!-- WORKSPACE                                                                 -->
+  <!-- ========================================================================= -->
+  <main class="mx-auto flex w-full max-w-7xl flex-col items-center gap-10 px-5 py-10 lg:flex-row lg:items-start lg:justify-center lg:gap-10 lg:px-8 lg:py-14">
+
+    <!-- ======================= LEFT RAIL ======================= -->
+    <aside class="w-full max-w-md space-y-6 lg:sticky lg:top-14 lg:w-[300px] lg:shrink-0">
+
+      <!-- Brand -->
+      <div class="space-y-4">
+        <div class="flex items-center gap-3.5">
+          <div class="flex h-12 w-12 items-center justify-center rounded-2xl bg-brand-yellow shadow-glow-yellow">
+            <i data-lucide="zap" class="h-6 w-6 fill-black stroke-[2.5] text-black"></i>
+          </div>
+          <div>
+            <h1 class="font-display text-2xl font-bold tracking-tight text-white">Charge<span class="text-brand-yellow">Karo</span></h1>
+            <p class="text-[13px] font-medium text-brand-muted">Peer-to-peer EV charging</p>
+          </div>
+        </div>
+        <p class="max-w-sm text-sm leading-relaxed text-slate-400">
+          Like Airbnb for EV chargers. Neighbours share their driveway outlets with drivers who need a boost — and earn from every kWh.
+        </p>
+      </div>
+
+      <!-- Role switch -->
+      <div class="space-y-2.5">
+        <div class="flex items-center justify-between px-1">
+          <span class="text-[11px] font-bold uppercase tracking-[0.14em] text-slate-500">Switch experience</span>
+        </div>
+        <div class="flex gap-1 rounded-2xl border border-white/5 bg-[#0E1015] p-1.5">
+          <button id="side-btn-driver" onclick="switchView('driver')" class="role-seg-btn is-active">
+            <i data-lucide="navigation" class="h-4 w-4 stroke-[2.5]"></i>
+            <span>Driver</span>
+          </button>
+          <button id="side-btn-host" onclick="switchView('host')" class="role-seg-btn">
+            <i data-lucide="home" class="h-4 w-4 stroke-[2.5]"></i>
+            <span>Host</span>
+          </button>
+        </div>
+        <p id="role-helper" class="px-1 text-xs leading-relaxed text-slate-500">
+          Find a nearby charger, compare rates and reserve a slot.
+        </p>
+      </div>
+
+      <!-- Demo actions -->
+      <div class="space-y-3">
+        <span class="px-1 text-[11px] font-bold uppercase tracking-[0.14em] text-slate-500">Try it out</span>
+
+        <button onclick="findNearestStation()" class="group flex w-full items-center justify-between gap-3 rounded-2xl border border-white/5 bg-[#0E1015] px-4 py-3.5 text-left transition hover:border-white/10 hover:bg-[#12151D] btn-press">
+          <span class="flex items-center gap-3">
+            <span class="flex h-9 w-9 items-center justify-center rounded-xl bg-brand-yellow/10 text-brand-yellow">
+              <i data-lucide="locate-fixed" class="h-4 w-4"></i>
+            </span>
+            <span>
+              <span class="block text-[13px] font-bold text-white">Find nearest charger</span>
+              <span class="block text-[11px] text-slate-500">Auto-select the closest host</span>
+            </span>
+          </span>
+          <i data-lucide="arrow-right" class="h-4 w-4 text-slate-500 transition group-hover:translate-x-0.5 group-hover:text-brand-yellow"></i>
+        </button>
+
+        <button onclick="triggerIncomingBookingSimulator()" class="group flex w-full items-center justify-between gap-3 rounded-2xl border border-white/5 bg-[#0E1015] px-4 py-3.5 text-left transition hover:border-white/10 hover:bg-[#12151D] btn-press">
+          <span class="flex items-center gap-3">
+            <span class="flex h-9 w-9 items-center justify-center rounded-xl bg-brand-orange/10 text-brand-orange">
+              <i data-lucide="bell-ring" class="h-4 w-4"></i>
+            </span>
+            <span>
+              <span class="block text-[13px] font-bold text-white">Simulate a request</span>
+              <span class="block text-[11px] text-slate-500">Host receives a live booking</span>
+            </span>
+          </span>
+          <i data-lucide="arrow-right" class="h-4 w-4 text-slate-500 transition group-hover:translate-x-0.5 group-hover:text-brand-orange"></i>
+        </button>
+      </div>
+
+      <!-- Map note -->
+      <div class="rounded-2xl border border-white/5 bg-[#0E1015] p-4">
+        <div class="flex items-center gap-2 text-[13px] font-bold text-white">
+          <i data-lucide="map" class="h-4 w-4 text-brand-yellow"></i>
+          <span>Live map included</span>
+        </div>
+        <p class="mt-2 text-[11.5px] leading-relaxed text-slate-500">
+          Powered by <strong class="font-semibold text-slate-400">Leaflet</strong> and Esri's free dark basemap. No API key, no billing — it just works.
+        </p>
+        <div class="mt-3 flex items-center gap-2 font-mono text-[10px] text-brand-yellow">
+          <span class="h-1.5 w-1.5 rounded-full bg-brand-green live-dot"></span>
+          <span>Leaflet 1.9.4 · Esri Dark Gray</span>
+        </div>
+      </div>
+
+    </aside>
+
+    <!-- ======================= PHONE ======================= -->
+    <div class="relative h-[820px] w-full max-w-[520px] shrink-0 rounded-[48px] bg-black p-[10px] shadow-[0_40px_120px_-24px_rgba(0,0,0,0.95)] ring-1 ring-white/10">
+
+      <!-- Inner screen -->
+      <div class="relative flex h-full w-full flex-col overflow-hidden rounded-[40px] bg-brand-dark">
+
+        <!-- ================= FIRST-RUN ONBOARDING ================= -->
+        <div id="onboarding-screen" class="absolute inset-0 z-[70] flex flex-col bg-[#0B0D11]">
+          <div class="shrink-0 px-6 pb-4 pt-12">
+            <div class="mb-5 flex items-center gap-3">
+              <div class="flex h-11 w-11 items-center justify-center rounded-2xl bg-brand-yellow shadow-glow-yellow">
+                <i data-lucide="zap" class="h-5 w-5 fill-black stroke-[2.5] text-black"></i>
+              </div>
+              <div>
+                <div class="font-display text-xl font-bold text-white">Charge<span class="text-brand-yellow">Karo</span></div>
+                <div class="text-[11px] text-slate-500">Charge anywhere. Share everywhere.</div>
+              </div>
+            </div>
+            <div class="flex items-center gap-1.5">
+              <span id="onboarding-step-1" class="h-1.5 flex-1 rounded-full bg-brand-yellow"></span>
+              <span id="onboarding-step-2" class="h-1.5 flex-1 rounded-full bg-white/10"></span>
+              <span id="onboarding-step-3" class="h-1.5 flex-1 rounded-full bg-white/10"></span>
+            </div>
+          </div>
+
+          <div class="min-h-0 flex-1 overflow-y-auto px-6 pb-5">
+            <div id="onboarding-role-step" class="space-y-5">
+              <div>
+                <p class="text-[11px] font-bold uppercase tracking-[.14em] text-brand-yellow">Welcome</p>
+                <h2 class="mt-2 font-display text-2xl font-bold leading-tight text-white">What brings you<br>to ChargeKaro?</h2>
+                <p class="mt-2 text-sm leading-relaxed text-slate-400">Choose a path and we’ll set up the right experience in under a minute.</p>
+              </div>
+              <div class="space-y-3">
+                <button type="button" id="onboarding-driver-choice" onclick="selectOnboardingRole('driver')" class="onboarding-choice is-selected">
+                  <span class="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-brand-yellow/15 text-brand-yellow"><i data-lucide="navigation" class="h-5 w-5"></i></span>
+                  <span><strong class="block text-sm font-extrabold text-white">I’m travelling</strong><span class="mt-1 block text-[11px] leading-relaxed text-slate-400">Find a compatible charger, plan my route and reserve ahead.</span></span>
+                  <i data-lucide="check-circle-2" class="ml-auto h-4 w-4 shrink-0 text-brand-yellow"></i>
+                </button>
+                <button type="button" id="onboarding-host-choice" onclick="selectOnboardingRole('host')" class="onboarding-choice host-choice">
+                  <span class="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-brand-orange/15 text-brand-orange"><i data-lucide="home" class="h-5 w-5"></i></span>
+                  <span><strong class="block text-sm font-extrabold text-white">I want to rent out my charger</strong><span class="mt-1 block text-[11px] leading-relaxed text-slate-400">List your charger, set your hours and welcome nearby drivers.</span></span>
+                  <i data-lucide="check-circle-2" class="ml-auto h-4 w-4 shrink-0 text-brand-orange"></i>
+                </button>
+              </div>
+            </div>
+
+            <div id="onboarding-driver-step" class="hidden space-y-5">
+              <div>
+                <p class="text-[11px] font-bold uppercase tracking-[.14em] text-brand-yellow">Your EV</p>
+                <h2 class="mt-2 font-display text-2xl font-bold leading-tight text-white">Tell us what<br>you drive.</h2>
+                <p class="mt-2 text-sm leading-relaxed text-slate-400">We’ll use your EV details to show chargers and plugs that fit.</p>
+              </div>
+              <div class="space-y-3">
+                <label class="block text-[11px] font-bold text-slate-300">Make & model
+                  <select id="onboarding-ev-model" onchange="syncEvModelConnector(this.value)" class="mt-1.5 w-full rounded-xl border border-white/10 bg-[#14171F] p-3 text-xs text-white outline-none focus:border-brand-yellow">
+                    <option value="byd-atto-3">BYD Atto 3</option>
+                    <option value="tesla-model-3">Tesla Model 3</option>
+                    <option value="mg-zs">MG ZS EV</option>
+                    <option value="kia-ev6">Kia EV6</option>
+                    <option value="other">Other EV / I’ll choose the plug</option>
+                  </select>
+                </label>
+                <label class="block text-[11px] font-bold text-slate-300">Charging plug
+                  <select id="onboarding-ev-connector" class="mt-1.5 w-full rounded-xl border border-white/10 bg-[#14171F] p-3 text-xs text-white outline-none focus:border-brand-yellow">
+                    <option value="Type 2">Type 2 AC (common in Pakistan, Europe & India)</option>
+                    <option value="CCS2">CCS2 / Combo 2 (DC fast charging)</option>
+                    <option value="CCS1">CCS1 / Combo 1</option>
+                    <option value="CHAdeMO">CHAdeMO</option>
+                    <option value="NACS">NACS / Tesla J3400</option>
+                    <option value="J1772">J1772 / Type 1 AC</option>
+                    <option value="GB/T">GB/T</option>
+                  </select>
+                </label>
+              </div>
+            </div>
+
+            <div id="onboarding-host-step" class="hidden space-y-5">
+              <div>
+                <p class="text-[11px] font-bold uppercase tracking-[.14em] text-brand-orange">Your listing</p>
+                <h2 class="mt-2 font-display text-2xl font-bold leading-tight text-white">Make your charger<br>easy to book.</h2>
+                <p class="mt-2 text-sm leading-relaxed text-slate-400">Drivers will see these details before they reserve your spot.</p>
+              </div>
+              <div class="space-y-3">
+                <fieldset>
+                  <legend class="mb-2 text-[11px] font-bold text-slate-300">Charging power</legend>
+                  <div class="grid grid-cols-2 gap-2">
+                    <label class="cursor-pointer rounded-xl border border-brand-orange bg-brand-orange/10 p-3"><input type="radio" name="onboarding-host-speed" value="3.3" class="accent-brand-orange"><span class="ml-1.5 text-[11px] font-bold text-white">3.3 kW socket</span></label>
+                    <label class="cursor-pointer rounded-xl border border-white/10 bg-[#14171F] p-3"><input type="radio" name="onboarding-host-speed" value="7.4" checked class="accent-brand-orange"><span class="ml-1.5 text-[11px] font-bold text-white">7.4 kW wallbox</span></label>
+                    <label class="cursor-pointer rounded-xl border border-white/10 bg-[#14171F] p-3"><input type="radio" name="onboarding-host-speed" value="11" class="accent-brand-orange"><span class="ml-1.5 text-[11px] font-bold text-white">11 kW 3-phase</span></label>
+                    <label class="cursor-pointer rounded-xl border border-white/10 bg-[#14171F] p-3"><input type="radio" name="onboarding-host-speed" value="22" class="accent-brand-orange"><span class="ml-1.5 text-[11px] font-bold text-white">22 kW fast AC</span></label>
+                  </div>
+                </fieldset>
+                <div class="grid grid-cols-2 gap-2">
+                  <label class="text-[11px] font-bold text-slate-300">Opens at<input id="onboarding-host-from" type="time" value="08:00" class="mt-1.5 w-full rounded-xl border border-white/10 bg-[#14171F] p-2.5 text-xs text-white"></label>
+                  <label class="text-[11px] font-bold text-slate-300">Closes at<input id="onboarding-host-to" type="time" value="23:30" class="mt-1.5 w-full rounded-xl border border-white/10 bg-[#14171F] p-2.5 text-xs text-white"></label>
+                </div>
+                <label class="block text-[11px] font-bold text-slate-300">Your rate (₨ per kWh)<input id="onboarding-host-rate" type="number" min="1" value="45" class="mt-1.5 w-full rounded-xl border border-white/10 bg-[#14171F] p-3 text-xs text-white outline-none focus:border-brand-orange"></label>
+                <label class="block text-[11px] font-bold text-slate-300">Plug compatibility<select id="onboarding-host-connector" class="mt-1.5 w-full rounded-xl border border-white/10 bg-[#14171F] p-3 text-xs text-white outline-none focus:border-brand-orange"><option>Type 2</option><option>CCS2</option><option>CCS1</option><option>CHAdeMO</option><option>NACS</option><option>J1772</option><option>GB/T</option></select></label>
+                <fieldset><legend class="mb-2 text-[11px] font-bold text-slate-300">Guest amenities</legend><div class="flex flex-wrap gap-2">
+                  <label class="amenity-chip rounded-lg border border-white/10 bg-[#14171F] px-2.5 py-2 text-[10px] text-slate-400"><input type="checkbox" value="Water" class="sr-only">💧 Water</label>
+                  <label class="amenity-chip rounded-lg border border-white/10 bg-[#14171F] px-2.5 py-2 text-[10px] text-slate-400"><input type="checkbox" value="Tea / coffee" class="sr-only">☕ Tea / coffee</label>
+                  <label class="amenity-chip rounded-lg border border-white/10 bg-[#14171F] px-2.5 py-2 text-[10px] text-slate-400"><input type="checkbox" value="Bathroom" class="sr-only">🚻 Bathroom</label>
+                  <label class="amenity-chip rounded-lg border border-white/10 bg-[#14171F] px-2.5 py-2 text-[10px] text-slate-400"><input type="checkbox" value="Rest area" class="sr-only">🪑 Rest area</label>
+                  <label class="amenity-chip rounded-lg border border-white/10 bg-[#14171F] px-2.5 py-2 text-[10px] text-slate-400"><input type="checkbox" value="Wi-Fi" class="sr-only">📶 Wi-Fi</label>
+                </div></fieldset>
+              </div>
+            </div>
+          </div>
+
+          <div class="shrink-0 border-t border-white/5 px-6 py-4">
+            <button id="onboarding-next-btn" onclick="advanceOnboarding()" class="flex w-full items-center justify-center gap-2 rounded-2xl bg-brand-yellow py-3.5 text-xs font-black text-black shadow-glow-yellow transition btn-press hover:bg-brand-yellowHover">Continue <i data-lucide="arrow-right" class="h-4 w-4"></i></button>
+          </div>
+        </div>
+
+        <!-- Dynamic island -->
+        <div class="absolute left-1/2 top-2.5 z-50 flex h-[26px] w-[112px] -translate-x-1/2 items-center justify-center rounded-full bg-black">
+          <div id="dynamic-island-status" class="flex items-center gap-1.5 text-[9px] font-bold tracking-wide text-slate-400">
+            <span class="h-1.5 w-1.5 rounded-full bg-brand-green live-dot"></span>
+            <span>ONLINE</span>
+          </div>
+        </div>
+
+        <!-- Status bar -->
+        <div class="relative z-40 flex shrink-0 items-center justify-between px-6 pb-1 pt-3.5 text-[11px] font-semibold text-slate-300">
+          <span id="phone-clock" class="font-display tracking-tight text-white">08:45</span>
+          <div class="flex items-center gap-1.5 text-slate-400">
+            <i data-lucide="signal" class="h-3.5 w-3.5"></i>
+            <span class="font-mono text-[10px] font-bold">5G</span>
+            <i data-lucide="wifi" class="h-3.5 w-3.5"></i>
+            <i data-lucide="battery-full" class="h-4 w-4 text-slate-300"></i>
+          </div>
+        </div>
+
+        <!-- App header -->
+        <header class="relative z-30 flex shrink-0 items-center justify-between gap-2 px-4 pb-3 pt-2">
+          <div class="flex items-center gap-1 rounded-full border border-white/5 bg-[#14171F] p-1">
+            <button id="tab-driver-btn" onclick="switchView('driver')" class="tab-btn is-active">
+              <i data-lucide="zap" class="h-3.5 w-3.5 fill-current stroke-[2.5]"></i>
+              <span>Driver</span>
+            </button>
+            <button id="tab-host-btn" onclick="switchView('host')" class="tab-btn">
+              <i data-lucide="home" class="h-3.5 w-3.5 stroke-[2]"></i>
+              <span>Host</span>
+            </button>
+          </div>
+
+          <div class="flex items-center gap-2">
+            <button id="top-reservation-pill" onclick="reopenActiveBookingSheet()" class="hidden items-center gap-1.5 rounded-full bg-brand-orange px-3 py-1.5 text-[11px] font-bold text-white shadow-glow-orange">
+              <i data-lucide="timer" class="h-3.5 w-3.5"></i>
+              <span>Active slot</span>
+            </button>
+
+            <button onclick="resetOnboarding()" title="Start over" class="flex h-9 w-9 items-center justify-center rounded-full border border-white/5 bg-[#14171F] text-slate-300 transition hover:text-brand-yellow">
+              <i data-lucide="rotate-ccw" class="h-4 w-4"></i>
+            </button>
+            <button onclick="triggerIncomingBookingSimulator()" title="Simulate alert" class="relative flex h-9 w-9 items-center justify-center rounded-full border border-white/5 bg-[#14171F] text-slate-300 transition hover:text-brand-yellow">
+              <i data-lucide="bell" class="h-4 w-4"></i>
+              <span class="absolute right-2 top-2 h-1.5 w-1.5 rounded-full bg-brand-orange"></span>
+            </button>
+          </div>
+        </header>
+
+        <!-- ================= DRIVER SCREEN ================= -->
+        <section id="driver-screen" class="relative min-h-0 flex-1 overflow-hidden">
+
+          <!-- Map -->
+          <div id="driver-map"></div>
+
+          <!-- Top overlay -->
+          <div class="pointer-events-none absolute inset-x-0 top-0 z-20 bg-gradient-to-b from-[#0B0D11] via-[#0B0D11]/85 to-transparent px-4 pb-10 pt-1">
+            <div class="pointer-events-auto space-y-2.5">
+              <!-- Uber-style route planner -->
+              <div class="rounded-2xl border border-white/10 bg-[#12151D]/95 p-3 shadow-lg backdrop-blur-md">
+                <div class="mb-2 flex items-center justify-between">
+                  <div class="flex items-center gap-2 text-[11px] font-extrabold text-white"><i data-lucide="route" class="h-4 w-4 text-brand-yellow"></i>Plan your charge stops</div>
+                  <span class="text-[9px] font-semibold text-slate-500">Lahore · LUMS</span>
+                  <span id="route-compatibility-label" class="text-[9px] font-bold text-brand-green">EV compatible</span>
+                </div>
+                <div class="space-y-1.5">
+                  <div class="route-stop"><span class="h-2 w-2 rounded-full bg-brand-yellow"></span><input id="route-start-input" value="LUMS, Lahore" aria-label="Starting point"></div>
+                  <div class="route-stop"><span class="h-2 w-2 rounded-full bg-brand-orange"></span><input id="route-destination-input" list="route-destinations" placeholder="Where are you going?" aria-label="Destination"><button onclick="enableMapRoutePick()" title="Pick destination on map" class="shrink-0 text-slate-400 transition hover:text-brand-yellow"><i data-lucide="map-pin" class="h-4 w-4"></i></button></div>
+                  <datalist id="route-destinations"><option value="Lahore Fort"></option><option value="Allama Iqbal International Airport"></option><option value="Gulberg"></option><option value="DHA Lahore"></option></datalist>
+                </div>
+                <div class="mt-2 grid grid-cols-2 gap-2">
+                  <label class="rounded-xl border border-white/10 bg-black/20 px-3 py-2 text-[10px] font-bold text-slate-400">Current charge
+                    <select id="trip-current-charge" class="mt-1 w-full bg-transparent text-[11px] text-white outline-none">
+                      <option value="20">Under 20%</option><option value="40">About 40%</option><option value="60" selected>About 60%</option><option value="80">About 80%</option>
+                    </select>
+                  </label>
+                  <label class="rounded-xl border border-white/10 bg-black/20 px-3 py-2 text-[10px] font-bold text-slate-400">Charge up to
+                    <select id="trip-target-charge" class="mt-1 w-full bg-transparent text-[11px] text-white outline-none">
+                      <option value="60">60%</option><option value="80">80%</option><option value="100" selected>100%</option>
+                    </select>
+                  </label>
+                </div>
+                <button onclick="planRoute()" class="mt-2 flex w-full items-center justify-center gap-2 rounded-xl bg-brand-yellow py-2.5 text-[11px] font-extrabold text-black transition hover:bg-brand-yellowHover"><i data-lucide="sparkles" class="h-3.5 w-3.5"></i>Show compatible chargers along the way</button>
+                <p id="route-helper-text" class="mt-2 hidden text-[10px] leading-relaxed text-slate-400"></p>
+              </div>
+              <!-- Search -->
+              <div class="flex items-center gap-2.5 rounded-2xl border border-white/10 bg-[#12151D]/95 px-3.5 py-3 shadow-lg backdrop-blur-md">
+                <i data-lucide="search" class="h-4 w-4 shrink-0 text-brand-yellow"></i>
+                <input type="text" id="station-search-input" onkeyup="filterStations()" placeholder="Search host, area or connector…"
+                  class="w-full bg-transparent text-[13px] text-white placeholder-slate-500 focus:outline-none">
+                <button onclick="clearSearch()" id="clear-search-btn" class="hidden text-slate-400 transition hover:text-white">
+                  <i data-lucide="x" class="h-4 w-4"></i>
+                </button>
+              </div>
+
+              <!-- Filter chips -->
+              <div class="no-scrollbar flex items-center gap-2 overflow-x-auto">
+                <button onclick="applyFilter('all')" id="filter-all" class="chip is-active">All (6)</button>
+                <button onclick="applyFilter('fast')" id="filter-fast" class="chip">
+                  <span class="text-brand-orange">⚡</span> Fast
+                </button>
+                <button onclick="applyFilter('standard')" id="filter-standard" class="chip">7.4 kW</button>
+                <button onclick="applyFilter('now')" id="filter-now" class="chip">
+                  <span class="h-1.5 w-1.5 rounded-full bg-brand-green"></span> Available
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Recenter -->
+          <div class="absolute bottom-[104px] right-4 z-20">
+            <button onclick="centerOnUser()" title="My location" class="flex h-11 w-11 items-center justify-center rounded-2xl border border-white/10 bg-[#12151D]/95 text-brand-yellow shadow-lg backdrop-blur-md transition btn-press hover:bg-[#181C26]">
+              <i data-lucide="crosshair" class="h-5 w-5"></i>
+            </button>
+          </div>
+
+          <!-- Floating CTA -->
+          <div id="floating-find-nearest-container" class="absolute inset-x-4 bottom-5 z-20">
+            <button onclick="findNearestStation()" class="flex w-full items-center justify-between gap-3 rounded-2xl bg-brand-yellow px-4 py-3.5 text-black shadow-glow-yellow transition btn-press hover:bg-brand-yellowHover">
+              <span class="flex items-center gap-3 text-left">
+                <span class="flex h-9 w-9 items-center justify-center rounded-xl bg-black/10">
+                  <i data-lucide="zap" class="h-4 w-4 fill-black stroke-[2.5] text-black"></i>
+                </span>
+                <span>
+                  <span class="block text-[13px] font-extrabold leading-tight">Find nearest charger</span>
+                  <span class="block text-[11px] font-semibold text-black/70">Tariq's 11 kW · 400 m away</span>
+                </span>
+              </span>
+              <span class="flex items-center gap-1 rounded-xl bg-black px-2.5 py-1.5 font-mono text-xs font-bold text-brand-yellow">
+                <span>₨42</span>
+                <span class="text-[10px] font-normal text-white/50">/kWh</span>
+              </span>
+            </button>
+          </div>
+
+          <!-- ================= STATION DETAIL SHEET ================= -->
+          <div id="station-bottom-sheet" class="sheet-transition absolute inset-x-0 bottom-0 z-40 flex max-h-[86%] translate-y-full flex-col rounded-t-[32px] border-t border-white/10 bg-[#0F1218] shadow-sheet">
+
+            <div class="flex shrink-0 justify-center pb-1 pt-3">
+              <button onclick="closeStationSheet()" aria-label="Close" class="h-1.5 w-10 rounded-full bg-white/20 transition hover:bg-white/40"></button>
+            </div>
+
+            <div class="min-h-0 flex-1 space-y-5 overflow-y-auto overscroll-contain px-5 pb-6 pt-2">
+
+              <!-- Host header -->
+              <div class="flex items-start justify-between gap-3">
+                <div class="flex items-center gap-3">
+                  <div class="relative shrink-0">
+                    <div id="sheet-host-avatar" class="flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-br from-brand-yellow to-brand-orange text-lg font-black text-black">TM</div>
+                    <div class="absolute -bottom-1 -right-1 flex h-5 w-5 items-center justify-center rounded-full border-2 border-[#0F1218] bg-brand-green text-black">
+                      <i data-lucide="check" class="h-3 w-3 stroke-[3]"></i>
+                    </div>
+                  </div>
+                  <div>
+                    <div class="flex items-center gap-2">
+                      <h3 id="sheet-host-name" class="text-[15px] font-extrabold text-white">Tariq Mahmood</h3>
+                      <span id="sheet-certification-badge" class="rounded-full bg-brand-yellow/10 px-2 py-0.5 text-[10px] font-bold text-brand-yellow">Verified</span>
+                    </div>
+                    <div class="mt-1 flex items-center gap-1.5 text-[11px] text-slate-400">
+                      <span class="flex items-center gap-1 font-bold text-brand-yellow">
+                        <i data-lucide="star" class="h-3 w-3 fill-current"></i>
+                        <span id="sheet-rating">4.9</span>
+                      </span>
+                      <span class="text-slate-600">·</span>
+                      <span id="sheet-distance">450 m away</span>
+                      <span class="text-slate-600">·</span>
+                      <span id="sheet-charges-count">38 charges</span>
+                    </div>
+                  </div>
+                </div>
+
+                <button onclick="closeStationSheet()" class="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-white/5 text-slate-400 transition hover:bg-white/10 hover:text-white">
+                  <i data-lucide="x" class="h-4 w-4"></i>
+                </button>
+              </div>
+
+              <!-- Address -->
+              <div class="flex items-center justify-between gap-3 border-y border-white/5 py-3">
+                <div class="flex min-w-0 items-center gap-2 text-[12px] text-slate-300">
+                  <i data-lucide="map-pin" class="h-4 w-4 shrink-0 text-brand-orange"></i>
+                  <span id="sheet-address" class="truncate font-medium">House 42-B, Street 7, Phase 5</span>
+                </div>
+                <span id="sheet-parking-type" class="shrink-0 rounded-lg bg-white/5 px-2.5 py-1 text-[10px] font-semibold text-slate-300">Driveway spot</span>
+              </div>
+
+              <!-- Specs -->
+              <div class="grid grid-cols-3 divide-x divide-white/5 rounded-2xl border border-white/5 bg-[#14171F] py-3.5 text-center">
+                <div class="px-1">
+                  <div class="text-[10px] font-semibold uppercase tracking-wide text-slate-500">Power</div>
+                  <div id="sheet-kw" class="mt-1 font-display text-lg font-bold text-brand-yellow">11 kW</div>
+                  <div id="sheet-phase" class="text-[10px] text-slate-500">3-Phase AC</div>
+                </div>
+                <div class="px-1">
+                  <div class="text-[10px] font-semibold uppercase tracking-wide text-slate-500">Connector</div>
+                  <div id="sheet-connector" class="mt-1.5 text-[13px] font-bold text-white">Type 2</div>
+                  <div class="text-[10px] text-brand-green">Mennekes</div>
+                </div>
+                <div class="px-1">
+                  <div class="text-[10px] font-semibold uppercase tracking-wide text-slate-500">Rate</div>
+                  <div id="sheet-rate" class="mt-1 font-display text-lg font-bold text-brand-orange">₨42</div>
+                  <div class="text-[10px] text-slate-500">per kWh</div>
+                </div>
+              </div>
+
+              <!-- Availability + notes -->
+              <div class="rounded-2xl border border-white/5 bg-[#14171F] p-4">
+                <div class="flex items-center justify-between gap-3 text-[11px]">
+                  <span class="flex items-center gap-2 font-medium text-slate-400">
+                    <i data-lucide="clock" class="h-4 w-4 text-brand-yellow"></i>
+                    Available today
+                  </span>
+                  <span id="sheet-availability-time" class="text-right font-bold text-brand-green">Until 11:30 PM</span>
+                </div>
+                <p id="sheet-host-notes" class="mt-3 border-t border-white/5 pt-3 text-[11.5px] leading-relaxed text-slate-400">"Gate is unlocked. Park in front of the wallbox."</p>
+                <div class="mt-3 border-t border-white/5 pt-3">
+                  <div class="mb-2 flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-wide text-slate-500">
+                    <i data-lucide="coffee" class="h-3.5 w-3.5 text-brand-orange"></i>
+                    Guest amenities
+                  </div>
+                  <div id="sheet-amenities" class="flex flex-wrap gap-1.5"></div>
+                </div>
+              </div>
+
+              <!-- Duration -->
+              <div class="space-y-3">
+                <div class="flex items-center justify-between">
+                  <span class="text-[13px] font-bold text-white">Duration</span>
+                  <span class="text-[11px] text-slate-500">Energy & cost estimate</span>
+                </div>
+
+                <div class="grid grid-cols-4 gap-2">
+                  <button type="button" onclick="selectDuration(0.5)" id="dur-0.5" class="dur-btn">30 min</button>
+                  <button type="button" onclick="selectDuration(1.0)" id="dur-1.0" class="dur-btn is-active">1 hour</button>
+                  <button type="button" onclick="selectDuration(1.5)" id="dur-1.5" class="dur-btn">1.5 hr</button>
+                  <button type="button" onclick="selectDuration(2.0)" id="dur-2.0" class="dur-btn">2 hours</button>
+                </div>
+
+                <div class="flex items-center justify-between rounded-2xl border border-white/5 bg-[#14171F] px-4 py-3.5">
+                  <div>
+                    <div class="text-[11px] text-slate-500">Estimated energy</div>
+                    <div class="mt-0.5 flex items-baseline gap-1.5">
+                      <span id="calc-kwh" class="font-display text-xl font-bold text-white">11.0</span>
+                      <span class="text-[11px] font-semibold text-slate-400">kWh</span>
+                      <span id="calc-range" class="text-[10px] text-slate-500">+75 km</span>
+                    </div>
+                  </div>
+                  <div class="text-right">
+                    <div class="text-[11px] text-slate-500">Total</div>
+                    <div id="calc-total-cost" class="font-display text-xl font-bold text-brand-orange">₨462</div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Book -->
+              <button onclick="initiateBooking()" class="flex w-full items-center justify-center gap-2 rounded-2xl bg-brand-yellow py-4 text-sm font-extrabold text-black shadow-glow-yellow transition btn-press hover:bg-brand-yellowHover">
+                <i data-lucide="calendar-check" class="h-4 w-4 stroke-[2.5]"></i>
+                <span id="book-action-text">Book slot · Tariq's 11 kW</span>
+              </button>
+
+            </div>
+          </div>
+
+          <!-- ================= ACTIVE SESSION ================= -->
+          <div id="active-session-sheet" class="sheet-transition absolute inset-0 z-50 flex translate-y-full flex-col bg-[#0B0D11]">
+
+            <div class="flex shrink-0 items-center justify-between border-b border-white/5 px-5 py-4">
+              <div class="flex items-center gap-2">
+                <span class="h-2 w-2 rounded-full bg-brand-green live-dot"></span>
+                <span class="text-[11px] font-extrabold uppercase tracking-wider text-brand-green">Slot confirmed</span>
+              </div>
+              <button onclick="dismissSessionSheet()" class="flex h-8 w-8 items-center justify-center rounded-full bg-white/5 text-slate-400 transition hover:bg-white/10 hover:text-white">
+                <i data-lucide="minimize-2" class="h-4 w-4"></i>
+              </button>
+            </div>
+
+            <div class="min-h-0 flex-1 space-y-4 overflow-y-auto overscroll-contain px-5 py-5">
+
+              <!-- Station -->
+              <div class="soft-card p-4">
+                <div class="flex items-start justify-between gap-3">
+                  <div>
+                    <div class="text-[10px] font-semibold uppercase tracking-wide text-slate-500">Residential station</div>
+                    <h4 id="active-host-name" class="mt-1 text-base font-bold text-white">Tariq Mahmood</h4>
+                    <div id="active-host-address" class="mt-0.5 text-[11px] text-slate-400">House 42-B, Street 7, Phase 5</div>
+                  </div>
+                  <div class="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-brand-yellow font-display text-xs font-black text-black shadow-glow-yellow">11kW</div>
+                </div>
+
+                <div class="mt-4 flex items-center justify-between rounded-xl border border-white/5 bg-black/30 p-3">
+                  <div>
+                    <div class="text-[10px] font-semibold text-slate-400">Charge start OTP</div>
+                    <div class="text-[10px] text-slate-500">Show the host on arrival</div>
+                  </div>
+                  <div id="active-otp" class="rounded-lg border border-brand-yellow/30 bg-[#14171F] px-3 py-1 font-mono text-xl font-black tracking-[0.2em] text-brand-yellow">4829</div>
+                </div>
+
+                <div class="mt-3 flex items-center justify-between text-[11px]">
+                  <span class="flex items-center gap-1.5 text-slate-400">
+                    <i data-lucide="navigation" class="h-3.5 w-3.5 text-brand-orange"></i>
+                    ETA to driveway
+                  </span>
+                  <span class="font-bold text-brand-orange">4 min · 450 m</span>
+                </div>
+              </div>
+
+              <!-- Metering -->
+              <div class="soft-card p-4">
+                <div class="flex items-center justify-between">
+                  <span class="text-[12px] font-bold text-slate-200">Live metering</span>
+                  <span id="session-status-badge" class="badge">Reserved</span>
+                </div>
+
+                <div class="mt-3 grid grid-cols-3 gap-2 text-center">
+                  <div class="rounded-xl bg-black/30 p-2.5">
+                    <div class="text-[9px] font-semibold uppercase tracking-wide text-slate-500">Power</div>
+                    <div class="mt-1 font-display text-[13px] font-bold text-white">11.0 kW</div>
+                  </div>
+                  <div class="rounded-xl bg-black/30 p-2.5">
+                    <div class="text-[9px] font-semibold uppercase tracking-wide text-slate-500">Energy</div>
+                    <div id="live-meter-kwh" class="mt-1 font-display text-[13px] font-bold text-brand-yellow">0.0 kWh</div>
+                  </div>
+                  <div class="rounded-xl bg-black/30 p-2.5">
+                    <div class="text-[9px] font-semibold uppercase tracking-wide text-slate-500">Fare</div>
+                    <div id="live-meter-fare" class="mt-1 font-display text-[13px] font-bold text-brand-orange">₨0</div>
+                  </div>
+                </div>
+
+                <button onclick="toggleChargingState()" id="btn-toggle-charge" class="mt-3 flex w-full items-center justify-center gap-2 rounded-xl bg-brand-green py-3 text-xs font-extrabold text-black transition btn-press hover:brightness-110">
+                  <i data-lucide="play" class="h-4 w-4 fill-black"></i>
+                  <span id="btn-toggle-charge-text">Simulate plug in & start</span>
+                </button>
+              </div>
+
+              <!-- Contact -->
+              <div class="grid grid-cols-2 gap-2">
+                <button onclick="alert('Calling host Tariq Mahmood: +92 300 8291032')" class="flex items-center justify-center gap-2 rounded-xl border border-white/5 bg-[#14171F] py-3 text-[11px] font-semibold text-slate-200 transition hover:bg-[#181C26]">
+                  <i data-lucide="phone" class="h-4 w-4 text-brand-yellow"></i>
+                  Call host
+                </button>
+                <button onclick="alert('Message sent to Tariq: Arriving in 3 mins with White BYD Atto 3')" class="flex items-center justify-center gap-2 rounded-xl border border-white/5 bg-[#14171F] py-3 text-[11px] font-semibold text-slate-200 transition hover:bg-[#181C26]">
+                  <i data-lucide="message-square" class="h-4 w-4 text-brand-orange"></i>
+                  Chat host
+                </button>
+              </div>
+
+              <button onclick="cancelActiveBooking()" class="w-full rounded-xl border border-red-500/20 bg-red-500/10 py-3 text-[11px] font-semibold text-red-400 transition hover:bg-red-500/20">
+                Cancel reservation
+              </button>
+            </div>
+          </div>
+
+        </section>
+
+        <!-- ================= HOST SCREEN ================= -->
+        <section id="host-screen" class="no-scrollbar relative hidden min-h-0 flex flex-1 flex-col overflow-y-auto bg-brand-dark px-4 pb-8 pt-1">
+          <div class="space-y-5">
+
+            <!-- Greeting -->
+            <div class="panel p-5">
+              <div class="flex items-start justify-between gap-3">
+                <div class="flex items-center gap-3">
+                  <div class="flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-br from-brand-orange to-brand-yellow text-lg font-black text-black">KR</div>
+                  <div>
+                    <div class="flex items-center gap-1.5">
+                      <h2 class="text-sm font-extrabold text-white">Kamran Rafiq</h2>
+                      <span class="rounded-full bg-brand-yellow/10 px-2 py-0.5 text-[9px] font-bold text-brand-yellow">Top host</span>
+                    </div>
+
+                    <div class="mt-0.5 text-[11px] text-slate-400">Phase 6 · Driveway wallbox</div>
+                  </div>
+
+                </div>
+
+                <button onclick="toggleHostLiveStatus()" id="host-live-toggle" class="status-pill is-online">
+                  <span class="h-1.5 w-1.5 rounded-full bg-current live-dot"></span>
+                  <span id="host-live-status-text">ONLINE</span>
+                </button>
+              </div>
+
+              <div class="mt-4 flex items-center justify-between border-t border-white/5 pt-3 text-[11px]">
+                <span class="flex items-center gap-1.5 text-slate-400">
+                  <i data-lucide="radio" class="h-3.5 w-3.5 text-brand-yellow"></i>
+                  Visible to nearby drivers
+                </span>
+                <span class="font-mono font-bold text-brand-yellow">7.4 kW · ₨45/kWh</span>
+              </div>
+            </div>
+
+            <!-- Host economics -->
+            <div class="panel w-full p-5">
+              <div class="flex items-start justify-between gap-3">
+                <div>
+                  <div class="flex items-center gap-2">
+                    <i data-lucide="calculator" class="h-4 w-4 text-brand-orange"></i>
+                    <h3 class="text-[12px] font-bold text-white">Charger ROI & financing</h3>
+                  </div>
+                  <p class="mt-1 text-[10px] leading-relaxed text-slate-500">Estimate your break-even and possible solar-upgrade loan.</p>
+                </div>
+                <span class="rounded-full bg-brand-green/10 px-2 py-1 text-[9px] font-bold text-brand-green">Simulator</span>
+              </div>
+              <div class="mt-4 grid grid-cols-2 gap-2">
+                <label class="text-[10px] font-semibold text-slate-400">Charger + install (₨)<input id="roi-investment" type="number" value="350000" oninput="updateHostFinance()" class="mt-1 w-full rounded-xl border border-white/10 bg-[#14171F] p-2.5 text-[11px] text-white"></label>
+                <label class="text-[10px] font-semibold text-slate-400">Solar surplus / month<input id="roi-solar" type="number" value="120" oninput="updateHostFinance()" class="mt-1 w-full rounded-xl border border-white/10 bg-[#14171F] p-2.5 text-[11px] text-white"></label>
+              </div>
+              <div class="mt-3 grid grid-cols-2 gap-2 text-center">
+                <div class="rounded-xl bg-black/25 p-2.5"><div class="text-[9px] uppercase tracking-wide text-slate-500">Break-even</div><div id="roi-breakeven" class="mt-1 font-display text-sm font-bold text-brand-yellow">8.3 months</div></div>
+                <div class="rounded-xl bg-black/25 p-2.5"><div class="text-[9px] uppercase tracking-wide text-slate-500">Indicative loan</div><div id="roi-loan" class="mt-1 font-display text-sm font-bold text-brand-orange">₨280,000</div></div>
+              </div>
+              <p class="mt-2 text-[9px] leading-relaxed text-slate-500">Illustrative only; final bank eligibility, rate and approval require a lender assessment.</p>
+            </div>
+
+            <!-- Financials -->
+            <div class="space-y-2.5">
+              <div class="flex items-center justify-between px-1">
+                <span class="text-[10px] font-bold uppercase tracking-[0.14em] text-slate-500">Financials</span>
+                <span class="text-[10px] font-medium text-slate-500">November 2026</span>
+              </div>
+
+              <div class="grid grid-cols-2 gap-3">
+                <div class="panel p-4">
+                  <div class="flex items-center justify-between text-[11px] text-slate-400">
+                    <span>Total earned</span>
+                    <i data-lucide="banknote" class="h-4 w-4 text-brand-yellow"></i>
+                  </div>
+                  <div id="host-metric-earnings" class="mt-2 font-display text-[22px] font-bold leading-none text-brand-yellow">₨38,450</div>
+                  <div class="mt-2 flex items-center gap-1 text-[10px] font-medium text-brand-green">
+                    <i data-lucide="trending-up" class="h-3 w-3"></i>
+                    <span>+₨2,840 today</span>
+                  </div>
+                </div>
+
+                <div class="panel p-4">
+                  <div class="flex items-center justify-between text-[11px] text-slate-400">
+                    <span>Energy sold</span>
+                    <i data-lucide="zap" class="h-4 w-4 text-brand-orange"></i>
+                  </div>
+                  <div id="host-metric-kwh" class="mt-2 font-display text-[22px] font-bold leading-none text-brand-orange">854.4 <span class="text-[11px] font-normal text-slate-400">kWh</span></div>
+                  <div class="mt-2 text-[10px] font-medium text-slate-400">Margin <span class="font-bold text-brand-yellow">~₨17/kWh</span></div>
+                </div>
+              </div>
+
+              <div class="grid grid-cols-3 divide-x divide-white/5 rounded-2xl border border-white/5 bg-[#10131A] py-3 text-center">
+                <div>
+                  <div class="text-[10px] text-slate-500">Charges</div>
+                  <div id="host-metric-sessions" class="mt-0.5 font-display text-sm font-bold text-white">48</div>
+                </div>
+                <div>
+                  <div class="text-[10px] text-slate-500">Rating</div>
+                  <div class="mt-0.5 flex items-center justify-center gap-1 font-display text-sm font-bold text-brand-yellow">
+                    <i data-lucide="star" class="h-3 w-3 fill-current"></i>
+                    <span>4.98</span>
+                  </div>
+                </div>
+                <div>
+                  <div class="text-[10px] text-slate-500">Grid cost</div>
+                  <div class="mt-0.5 font-display text-sm font-bold text-slate-300">₨28</div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Station setup -->
+            <div class="panel p-5">
+              <div class="flex items-center justify-between">
+                <div class="flex items-center gap-2">
+                  <i data-lucide="settings" class="h-4 w-4 text-brand-yellow"></i>
+                  <h3 class="text-[12px] font-bold text-white">Station setup</h3>
+                </div>
+                <button onclick="toggleSetupEditModal()" class="text-[11px] font-bold text-brand-yellow transition hover:text-brand-yellowHover">Edit specs</button>
+              </div>
+
+              <div class="mt-3 divide-y divide-white/5 text-[11px]">
+                <div class="flex items-center justify-between py-2.5">
+                  <span class="text-slate-400">Hardware</span>
+                  <span id="host-disp-speed" class="font-semibold text-white">7.4 kW Level 2 Wallbox</span>
+                </div>
+                <div class="flex items-center justify-between py-2.5">
+                  <span class="text-slate-400">Connector</span>
+                  <span id="host-disp-connector" class="font-semibold text-white">Type 2 (IEC 62196)</span>
+                </div>
+                <div class="flex items-center justify-between py-2.5">
+                  <span class="text-slate-400">Selling price</span>
+                  <span id="host-disp-price" class="font-mono font-bold text-brand-orange">₨ 45 / kWh</span>
+                </div>
+                <div class="flex items-center justify-between py-2.5">
+                  <span class="text-slate-400">Availability</span>
+                  <span id="host-disp-hours" class="font-semibold text-brand-green">08:00 – 23:30</span>
+                </div>
+              </div>
+
+              <p id="host-disp-notes" class="mt-3 rounded-xl bg-black/30 p-3 text-[11px] leading-relaxed text-slate-400">"Driveway spot on left side. Gate is open, lock code 2024."</p>
+            </div>
+
+            <!-- Simulate -->
+            <button onclick="triggerIncomingBookingSimulator()" class="flex w-full items-center justify-center gap-2 rounded-2xl border border-brand-orange/30 bg-brand-orange/10 py-3.5 text-[11px] font-bold text-brand-orange transition hover:bg-brand-orange/10 btn-press">
+              <i data-lucide="bell-ring" class="h-4 w-4"></i>
+              <span>Simulate incoming driver request</span>
+            </button>
+
+            <!-- History -->
+            <div class="space-y-2.5">
+              <div class="flex items-center justify-between px-1">
+                <span class="text-[10px] font-bold uppercase tracking-[0.14em] text-slate-500">Charge history</span>
+                <span class="text-[10px] text-slate-500">Recent drivers</span>
+              </div>
+
+              <div class="space-y-2" id="host-history-list">
+                <div class="soft-card p-4 transition hover:bg-[#181C26]">
+                  <div class="flex items-center justify-between gap-3">
+                    <div class="flex items-center gap-3">
+                      <div class="flex h-9 w-9 items-center justify-center rounded-xl border border-white/5 bg-[#0B0D11] text-[10px] font-bold text-brand-yellow">AR</div>
+                      <div>
+                        <div class="text-[12px] font-bold text-white">Ali Raza</div>
+                        <div class="text-[10px] text-slate-500">MG ZS EV · 1h 45m</div>
+                      </div>
+                    </div>
+                    <div class="text-right">
+                      <div class="font-mono text-[13px] font-bold text-brand-yellow">+₨828</div>
+                      <div class="font-mono text-[10px] text-brand-orange">18.4 kWh</div>
+                    </div>
+                  </div>
+                  <div class="mt-2.5 flex items-center justify-between border-t border-white/5 pt-2 text-[10px] text-slate-500">
+                    <span>Today, 4:15 PM</span>
+                    <span class="font-semibold text-brand-green">● Completed</span>
+                  </div>
+                </div>
+
+                <div class="soft-card p-4 transition hover:bg-[#181C26]">
+                  <div class="flex items-center justify-between gap-3">
+                    <div class="flex items-center gap-3">
+                      <div class="flex h-9 w-9 items-center justify-center rounded-xl border border-white/5 bg-[#0B0D11] text-[10px] font-bold text-brand-yellow">HS</div>
+                      <div>
+                        <div class="text-[12px] font-bold text-white">Hamza Sheikh</div>
+                        <div class="text-[10px] text-slate-500">Tesla Model 3 · 2h 20m</div>
+                      </div>
+                    </div>
+                    <div class="text-right">
+                      <div class="font-mono text-[13px] font-bold text-brand-yellow">+₨1,179</div>
+                      <div class="font-mono text-[10px] text-brand-orange">26.2 kWh</div>
+                    </div>
+                  </div>
+                  <div class="mt-2.5 flex items-center justify-between border-t border-white/5 pt-2 text-[10px] text-slate-500">
+                    <span>Yesterday, 8:00 PM</span>
+                    <span class="font-semibold text-brand-green">● Completed</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </section>
+
+        <!-- ================= HOST SETUP MODAL ================= -->
+        <div id="host-setup-modal" class="absolute inset-0 z-50 hidden flex flex-col bg-[#0B0D11]/95 backdrop-blur-md">
+          <div class="flex shrink-0 items-center justify-between border-b border-white/5 px-5 py-4">
+            <div>
+              <h3 class="text-base font-extrabold text-white">Configure charger</h3>
+              <p class="mt-0.5 text-[11px] text-slate-500">Power, tariff and availability</p>
+            </div>
+            <button onclick="toggleSetupEditModal()" class="flex h-8 w-8 items-center justify-center rounded-full bg-white/5 text-slate-400 transition hover:bg-white/10 hover:text-white">
+              <i data-lucide="x" class="h-4 w-4"></i>
+            </button>
+          </div>
+
+          <div class="min-h-0 flex-1 space-y-5 overflow-y-auto px-5 py-5">
+            <div class="space-y-2.5">
+              <label class="text-[11px] font-bold text-slate-300">Charging power</label>
+              <div class="grid grid-cols-2 gap-2">
+                <label class="flex cursor-pointer items-center gap-2 rounded-2xl border border-white/5 bg-[#14171F] p-3 transition hover:border-white/10">
+                  <input type="radio" name="cfg-speed" value="3.3" class="accent-brand-yellow">
+                  <span>
+                    <span class="block text-[11px] font-bold text-white">3.3 kW socket</span>
+                    <span class="block text-[10px] text-slate-500">16A standard</span>
+                  </span>
+                </label>
+                <label class="flex cursor-pointer items-center gap-2 rounded-2xl border border-brand-yellow bg-brand-yellow/10 p-3">
+                  <input type="radio" name="cfg-speed" value="7.4" checked class="accent-brand-yellow">
+                  <span>
+                    <span class="block text-[11px] font-bold text-brand-yellow">7.4 kW wallbox</span>
+                    <span class="block text-[10px] text-slate-500">Single phase 32A</span>
+                  </span>
+                </label>
+                <label class="flex cursor-pointer items-center gap-2 rounded-2xl border border-white/5 bg-[#14171F] p-3 transition hover:border-white/10">
+                  <input type="radio" name="cfg-speed" value="11" class="accent-brand-yellow">
+                  <span>
+                    <span class="block text-[11px] font-bold text-white">11 kW 3-phase</span>
+                    <span class="block text-[10px] text-slate-500">Fast AC 16A</span>
+                  </span>
+                </label>
+                <label class="flex cursor-pointer items-center gap-2 rounded-2xl border border-white/5 bg-[#14171F] p-3 transition hover:border-white/10">
+                  <input type="radio" name="cfg-speed" value="22" class="accent-brand-yellow">
+                  <span>
+                    <span class="block text-[11px] font-bold text-white">22 kW heavy</span>
+                    <span class="block text-[10px] text-slate-500">Commercial AC</span>
+                  </span>
+                </label>
+              </div>
+            </div>
+
+            <div class="space-y-2.5 rounded-2xl border border-white/5 bg-[#14171F] p-4">
+              <div class="flex items-center justify-between">
+                <span class="text-[11px] font-bold text-slate-300">Selling tariff</span>
+                <span id="cfg-price-display" class="font-mono text-lg font-black text-brand-orange">₨ 45</span>
+              </div>
+              <input type="range" id="cfg-price-slider" min="30" max="75" step="1" value="45" oninput="updatePriceSlider(this.value)" class="w-full cursor-pointer">
+              <div class="flex items-center justify-between text-[10px] text-slate-500">
+                <span>₨30</span>
+                <span class="font-semibold text-brand-green">Profit ~₨17/kWh</span>
+                <span>₨75</span>
+              </div>
+            </div>
+
+            <div class="space-y-2">
+              <label class="text-[11px] font-bold text-slate-300">Availability window</label>
+              <div class="grid grid-cols-2 gap-2">
+                <div>
+                  <span class="text-[10px] text-slate-500">Opens at</span>
+                  <input type="time" id="cfg-time-from" value="08:00" class="mt-1 w-full rounded-xl border border-white/5 bg-[#14171F] p-2.5 text-[11px] text-white">
+                </div>
+                <div>
+                  <span class="text-[10px] text-slate-500">Closes at</span>
+                  <input type="time" id="cfg-time-to" value="23:30" class="mt-1 w-full rounded-xl border border-white/5 bg-[#14171F] p-2.5 text-[11px] text-white">
+                </div>
+              </div>
+            </div>
+
+            <div class="space-y-2">
+              <label class="text-[11px] font-bold text-slate-300">Driveway & access notes</label>
+              <textarea id="cfg-notes" rows="3" class="w-full rounded-2xl border border-white/5 bg-[#14171F] p-3 text-[11px] text-white placeholder-slate-500 focus:border-brand-yellow focus:outline-none">Driveway spot on left side. Gate is open, lock code 2024. CCTV monitored. High-speed WiFi reaches car.</textarea>
+            </div>
+          </div>
+
+          <div class="shrink-0 border-t border-white/5 px-5 py-4">
+            <button onclick="saveStationSetup()" class="w-full rounded-2xl bg-brand-yellow py-3.5 text-xs font-black text-black shadow-glow-yellow transition btn-press hover:bg-brand-yellowHover">Save station</button>
+          </div>
+        </div>
+
+        <!-- ================= INCOMING REQUEST ================= -->
+        <div id="incoming-request-modal" class="absolute inset-x-4 top-4 z-50 hidden rounded-3xl border border-brand-yellow/60 bg-[#141822] p-4 shadow-2xl">
+          <div class="flex items-center justify-between">
+            <div class="flex items-center gap-2">
+              <span class="h-2 w-2 rounded-full bg-brand-yellow live-dot"></span>
+              <span class="text-[10px] font-black uppercase tracking-wider text-brand-yellow">Incoming request</span>
+            </div>
+            <span id="incoming-timer" class="rounded-lg bg-brand-orange/10 px-2 py-0.5 font-mono text-[11px] font-bold text-brand-orange">28s</span>
+          </div>
+
+          <div class="mt-3 flex items-center justify-between rounded-2xl bg-black/40 p-3">
+            <div class="flex items-center gap-2.5">
+              <div class="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-tr from-brand-yellow to-brand-orange text-[11px] font-extrabold text-black">SZ</div>
+              <div>
+                <div class="text-[12px] font-bold text-white">Salman Zaidi</div>
+                <div class="text-[10px] text-slate-400">Audi e-tron 55 · 1.5 hr</div>
+              </div>
+            </div>
+            <div class="text-right">
+              <div class="font-mono text-[13px] font-bold text-brand-yellow">₨742</div>
+              <div class="text-[10px] text-slate-500">~16.5 kWh</div>
+            </div>
+          </div>
+
+          <p class="mt-3 text-[11px] leading-relaxed text-slate-300">Driver is 2.1 km away and can arrive in 10 minutes.</p>
+
+          <div class="mt-3 grid grid-cols-2 gap-2">
+            <button onclick="declineIncomingRequest()" class="rounded-xl bg-white/5 py-3 text-[11px] font-bold text-slate-300 transition hover:bg-white/10">Decline</button>
+            <button onclick="acceptIncomingRequest()" class="rounded-xl bg-brand-yellow py-3 text-[11px] font-black text-black shadow-glow-yellow transition btn-press hover:bg-brand-yellowHover">Accept driver</button>
+          </div>
+        </div>
+
+        <!-- Home indicator -->
+        <div class="pointer-events-none absolute bottom-2 left-1/2 z-50 h-1 w-28 -translate-x-1/2 rounded-full bg-white/25"></div>
+
+      </div>
+    </div>
+
+  </main>
+
+  <!-- ========================================================================= -->
+  <!-- APP CONTROLLER                                                            -->
+  <!-- ========================================================================= -->
+  <script>
+    const APP_STATE = {
+      currentView: 'driver',
+      activeFilter: 'all',
+      searchQuery: '',
+      userLocation: [31.4697, 74.4095],
+      selectedStationId: null,
+      selectedDuration: 1.0,
+      activeBooking: null,
+      chargingInterval: null,
+      incomingTimerInterval: null,
+      isHostOnline: true,
+      onboardingStep: 'role',
+      onboardingRole: 'driver',
+      routeDestination: null,
+      evProfile: { model: 'byd-atto-3', connector: 'Type 2', minKw: 0 },
+      routeStops: [],
+
+      hostStation: {
+        name: "Kamran Rafiq",
+        speed: 7.4,
+        price: 45,
+        connector: "Type 2",
+        availableFrom: "08:00",
+        availableTo: "23:30",
+        amenities: [],
+        notes: "Driveway spot on left side. Gate is open, lock code 2024. CCTV monitored. High-speed WiFi reaches car.",
+        earnings: 38450,
+        kwhDispensed: 854.4,
+        sessionsCount: 48,
+        rating: 4.98
+      },
+
+      stations: [
+        {
+          id: 'st-1', hostName: "Tariq Mahmood", avatar: "TM", rating: 4.9, chargesCount: 38, certified: true,
+          address: "House 42-B, Street 7, Phase 5", parkingType: "Driveway spot",
+          coords: [31.4850, 74.3950], kw: 11.0, phase: "3-Phase AC", connector: "Type 2 Mennekes",
+          pricePerKwh: 42, availableUntil: "11:30 PM", hoursRemaining: "4h 15m left",
+          notes: "Driveway gate is unlocked. Park in front of the wallbox. Cord is 6m long. Please ring bell #1 if you need help.",
+          amenities: ["Water", "Bathroom", "Wi-Fi"],
+          isAvailableNow: true, category: 'fast'
+        },
+        {
+          id: 'st-2', hostName: "Zubair Alvi", avatar: "ZA", rating: 4.8, chargesCount: 22, certified: true,
+          address: "Bungalow 18, Khayaban-e-Shamsheer", parkingType: "Covered porch",
+          coords: [31.5050, 74.3800], kw: 22.0, phase: "3-Phase AC (Fast)", connector: "Type 2 High-Power",
+          pricePerKwh: 52, availableUntil: "09:00 PM", hoursRemaining: "2h 45m left",
+          notes: "High-speed ABB Terra 22 kW wallbox. Shaded parking with solar canopy.",
+          amenities: ["Water", "Rest area", "Wi-Fi"],
+          isAvailableNow: true, category: 'fast'
+        },
+        {
+          id: 'st-3', hostName: "Hamid Raza", avatar: "HR", rating: 5.0, chargesCount: 45, certified: true,
+          address: "Lane 4, Off Saba Avenue", parkingType: "Gate slot",
+          coords: [31.5250, 74.3600], kw: 7.4, phase: "Single Phase AC", connector: "Type 2 Mennekes",
+          pricePerKwh: 38, availableUntil: "12:00 AM", hoursRemaining: "5h 30m left",
+          notes: "Easy drive-in ramp. Guest WiFi password displayed right next to the wallbox.",
+          amenities: ["Tea / coffee", "Wi-Fi"],
+          isAvailableNow: true, category: 'standard'
+        },
+        {
+          id: 'st-4', hostName: "Sikandar Shah", avatar: "SS", rating: 4.7, chargesCount: 16, certified: true,
+          address: "House 91, Street 12, Phase 6", parkingType: "Carport slot",
+          coords: [31.5500, 74.3400], kw: 7.4, phase: "Single Phase AC", connector: "Type 2 Mennekes",
+          pricePerKwh: 40, availableUntil: "06:00 PM", hoursRemaining: "1h 15m left",
+          notes: "Wallbox is mounted near the front pillar. Breaker is switched on.",
+          amenities: ["Water", "Bathroom"],
+          isAvailableNow: true, category: 'standard'
+        },
+        {
+          id: 'st-5', hostName: "Naveed Akhtar", avatar: "NA", rating: 4.6, chargesCount: 9, certified: false,
+          address: "Plot 304, Badar Commercial", parkingType: "Gated courtyard",
+          coords: [31.5750, 74.3250], kw: 3.3, phase: "16A Heavy Socket", connector: "Industrial Blue CEE",
+          pricePerKwh: 32, availableUntil: "10:30 PM", hoursRemaining: "3h 00m left",
+          notes: "16A industrial socket. Bring your portable EVSE charger brick.",
+          amenities: ["Rest area"],
+          isAvailableNow: true, category: 'socket'
+        },
+        {
+          id: 'st-6', hostName: "Kamran Rafiq", avatar: "KR", rating: 4.98, chargesCount: 48, certified: true,
+          address: "Phase 6 Driveway Wallbox #1", parkingType: "Left driveway bay",
+          coords: [31.5000, 74.4200], kw: 7.4, phase: "Single Phase 32A", connector: "Type 2 Mennekes",
+          pricePerKwh: 45, availableUntil: "11:30 PM", hoursRemaining: "4h 00m left",
+          notes: "Driveway spot on left side. Gate is open, lock code 2024. CCTV monitored.",
+          amenities: ["Water", "Tea / coffee", "Bathroom", "Rest area", "Wi-Fi"],
+          isAvailableNow: true, category: 'standard'
+        }
+      ]
+    };
+
+    let map = null;
+    let markersLayer = null;
+    let userMarker = null;
+    let routePolyline = null;
+    let routePickMode = false;
+
+    const ROUTE_DESTINATIONS = {
+      'lahore fort': [31.5880, 74.3090],
+      'allama iqbal international airport': [31.5216, 74.4036],
+      'gulberg': [31.5204, 74.3587],
+      'dha lahore': [31.4690, 74.4080]
+    };
+
+    /* ---------------- Onboarding ---------------- */
+    function selectOnboardingRole(role) {
+      playBeep('click');
+      APP_STATE.onboardingRole = role;
+      document.getElementById('onboarding-driver-choice').classList.toggle('is-selected', role === 'driver');
+      document.getElementById('onboarding-host-choice').classList.toggle('is-selected', role === 'host');
+    }
+
+    function syncEvModelConnector(model) {
+      const connectorByModel = {
+        'byd-atto-3': 'Type 2',
+        'tesla-model-3': 'Type 2',
+        'mg-zs': 'Type 2',
+        'kia-ev6': 'CCS2',
+        other: 'Type 2'
+      };
+      document.getElementById('onboarding-ev-connector').value = connectorByModel[model] || 'Type 2';
+    }
+
+    function updateOnboardingProgress(step) {
+      ['1', '2', '3'].forEach(n => {
+        const el = document.getElementById(`onboarding-step-${n}`);
+        el.classList.toggle('bg-brand-yellow', (step === 'role' && n === '1') || (step !== 'role' && n === '2'));
+        el.classList.toggle('bg-brand-orange', step === 'host' && n === '2');
+        el.classList.toggle('bg-white/10', !((step === 'role' && n === '1') || (step !== 'role' && n === '2')));
+      });
+    }
+
+    function advanceOnboarding() {
+      playBeep('click');
+      if (APP_STATE.onboardingStep === 'role') {
+        APP_STATE.onboardingStep = APP_STATE.onboardingRole;
+        document.getElementById('onboarding-role-step').classList.add('hidden');
+        document.getElementById(`onboarding-${APP_STATE.onboardingRole}-step`).classList.remove('hidden');
+        const next = document.getElementById('onboarding-next-btn');
+        next.innerHTML = `${APP_STATE.onboardingRole === 'driver' ? 'Show my route map' : 'Publish my charger'} <i data-lucide="arrow-right" class="h-4 w-4"></i>`;
+        next.classList.toggle('bg-brand-yellow', APP_STATE.onboardingRole === 'driver');
+        next.classList.toggle('bg-brand-orange', APP_STATE.onboardingRole === 'host');
+        next.classList.toggle('text-black', true);
+        updateOnboardingProgress(APP_STATE.onboardingStep);
+        if (window.lucide) lucide.createIcons();
+        return;
+      }
+
+      if (APP_STATE.onboardingRole === 'driver') {
+        APP_STATE.evProfile = {
+          model: document.getElementById('onboarding-ev-model').value,
+          connector: document.getElementById('onboarding-ev-connector').value,
+          minKw: 0
+        };
+        document.getElementById('route-compatibility-label').textContent = `${APP_STATE.evProfile.connector} ready`;
+        finishOnboarding('driver');
+      } else {
+        const speed = Number(document.querySelector('input[name="onboarding-host-speed"]:checked').value);
+        const amenities = [...document.querySelectorAll('#onboarding-host-step input[type="checkbox"]:checked')].map(input => input.value);
+        APP_STATE.hostStation.speed = speed;
+        APP_STATE.hostStation.price = Number(document.getElementById('onboarding-host-rate').value) || 45;
+        APP_STATE.hostStation.connector = document.getElementById('onboarding-host-connector').value;
+        APP_STATE.hostStation.availableFrom = document.getElementById('onboarding-host-from').value;
+        APP_STATE.hostStation.availableTo = document.getElementById('onboarding-host-to').value;
+        APP_STATE.hostStation.amenities = amenities;
+        finishOnboarding('host');
+      }
+    }
+
+    function finishOnboarding(role) {
+      document.getElementById('onboarding-screen').classList.add('hidden');
+      switchView(role);
+      if (role === 'host') {
+        document.getElementById('host-disp-speed').textContent = `${APP_STATE.hostStation.speed} kW Level 2 Wallbox`;
+        document.getElementById('host-disp-connector').textContent = APP_STATE.hostStation.connector;
+        document.getElementById('host-disp-price').textContent = `₨ ${APP_STATE.hostStation.price} / kWh`;
+        document.getElementById('host-disp-hours').textContent = `${APP_STATE.hostStation.availableFrom} – ${APP_STATE.hostStation.availableTo}`;
+        document.getElementById('host-disp-notes').textContent = APP_STATE.hostStation.amenities.length
+          ? `Amenities: ${APP_STATE.hostStation.amenities.join(', ')}`
+          : 'Add amenities to help drivers choose your station.';
+        updateHostFinance();
+      }
+      if (window.lucide) lucide.createIcons();
+      if (map) setTimeout(() => map.invalidateSize(), 160);
+      if (role === 'driver') {
+        document.getElementById('route-destination-input').value = 'Lahore Fort';
+        planRoute();
+      }
+    }
+
+    /* ---------------- Route planning ---------------- */
+    function isStationCompatible(station) {
+      const connector = APP_STATE.evProfile.connector;
+      const connectorMatch = connector === 'Type 2'
+        ? station.connector.includes('Type 2') || station.connector.includes('CCS2')
+        : station.connector.includes(connector);
+      return connectorMatch && station.kw >= APP_STATE.evProfile.minKw;
+    }
+
+    function stationIsAlongRoute(station, start, end) {
+      const scale = Math.cos(start[0] * Math.PI / 180);
+      const x = (station.coords[1] - start[1]) * scale;
+      const y = station.coords[0] - start[0];
+      const ex = (end[1] - start[1]) * scale;
+      const ey = end[0] - start[0];
+      const length = ex * ex + ey * ey || 1;
+      const t = Math.max(0, Math.min(1, (x * ex + y * ey) / length));
+      const dx = x - t * ex;
+      const dy = y - t * ey;
+      return Math.sqrt(dx * dx + dy * dy) < 0.025;
+    }
+
+    function enableMapRoutePick() {
+      routePickMode = true;
+      const helper = document.getElementById('route-helper-text');
+      helper.textContent = 'Tap anywhere on the map to set your destination.';
+      helper.classList.remove('hidden');
+    }
+
+    function planRoute(destinationCoords) {
+      playBeep('success');
+      const input = document.getElementById('route-destination-input');
+      const key = (input.value || '').trim().toLowerCase();
+      const destination = destinationCoords || ROUTE_DESTINATIONS[key] || [31.5880, 74.3090];
+      APP_STATE.routeDestination = destination;
+      routePickMode = false;
+
+      const currentCharge = Number(document.getElementById('trip-current-charge').value);
+      const targetCharge = Number(document.getElementById('trip-target-charge').value);
+      const chargeGap = Math.max(0, targetCharge - currentCharge);
+      const compatible = APP_STATE.stations
+        .filter(station => isStationCompatible(station) && stationIsAlongRoute(station, APP_STATE.userLocation, destination))
+        .sort((a, b) => stationRouteScore(b, destination) - stationRouteScore(a, destination));
+      APP_STATE.routeStops = compatible;
+      renderStationMarkers(compatible);
+      drawRouteLine(APP_STATE.userLocation, destination, compatible);
+
+      const helper = document.getElementById('route-helper-text');
+      helper.textContent = compatible.length
+        ? `${compatible.length} compatible stop${compatible.length === 1 ? '' : 's'} ranked for your ${chargeGap}% top-up. We weigh detour, traffic, speed, rating and availability. Tap a pin to reserve.`
+        : `No exact ${APP_STATE.evProfile.connector} matches found. Try another plug filter or lower the minimum speed.`;
+      helper.classList.remove('hidden');
+      document.getElementById('route-compatibility-label').textContent = `${compatible.length} stops found`;
+    }
+
+    function stationRouteScore(station, destination) {
+      const detour = distanceMeters(station.coords, destination);
+      const trafficPenalty = station.id === 'st-2' ? 0.8 : 1;
+      const availabilityBonus = station.isAvailableNow ? 1.15 : 0.5;
+      return (station.kw * 0.4 + station.rating * 2 + station.chargesCount * 0.02 + availabilityBonus) * trafficPenalty - detour / 10000;
+    }
+
+    /* ---------------- Utilities ---------------- */
+    function playBeep(type = 'click') {
+      try {
+        if (!window.__audioCtx) {
+          const Ctx = window.AudioContext || window.webkitAudioContext;
+          if (!Ctx) return;
+          window.__audioCtx = new Ctx();
+        }
+        const audioCtx = window.__audioCtx;
+        if (audioCtx.state === 'suspended') audioCtx.resume();
+
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        const now = audioCtx.currentTime;
+
+        if (type === 'click') {
+          osc.frequency.setValueAtTime(800, now);
+          osc.frequency.exponentialRampToValueAtTime(400, now + 0.04);
+          gain.gain.setValueAtTime(0.05, now);
+          gain.gain.linearRampToValueAtTime(0.01, now + 0.04);
+          osc.start(now); osc.stop(now + 0.04);
+        } else if (type === 'success') {
+          osc.type = 'triangle';
+          osc.frequency.setValueAtTime(523.25, now);
+          osc.frequency.setValueAtTime(659.25, now + 0.08);
+          gain.gain.setValueAtTime(0.09, now);
+          gain.gain.exponentialRampToValueAtTime(0.001, now + 0.3);
+          osc.start(now); osc.stop(now + 0.3);
+        } else if (type === 'alert') {
+          osc.type = 'square';
+          osc.frequency.setValueAtTime(880, now);
+          osc.frequency.setValueAtTime(1174, now + 0.09);
+          gain.gain.setValueAtTime(0.07, now);
+          gain.gain.exponentialRampToValueAtTime(0.001, now + 0.28);
+          osc.start(now); osc.stop(now + 0.28);
+        }
+      } catch (e) { /* audio is optional */ }
+    }
+
+    function updateClock() {
+      const now = new Date();
+      const mins = now.getMinutes() < 10 ? '0' + now.getMinutes() : now.getMinutes();
+      const el = document.getElementById('phone-clock');
+      if (el) el.textContent = `${now.getHours()}:${mins}`;
+    }
+    setInterval(updateClock, 1000);
+    updateClock();
+
+    function distanceMeters(a, b) {
+      const R = 6371000;
+      const toRad = d => d * Math.PI / 180;
+      const dLat = toRad(b[0] - a[0]);
+      const dLng = toRad(b[1] - a[1]);
+      const lat1 = toRad(a[0]);
+      const lat2 = toRad(b[0]);
+      const h = Math.sin(dLat / 2) ** 2 + Math.cos(lat1) * Math.cos(lat2) * Math.sin(dLng / 2) ** 2;
+      return 2 * R * Math.asin(Math.sqrt(h));
+    }
+
+    function formatDistance(m) {
+      return m < 1000 ? `${Math.round(m / 10) * 10} m away` : `${(m / 1000).toFixed(1)} km away`;
+    }
+
+    /* ---------------- Map ---------------- */
+    function initMap() {
+      const mapEl = document.getElementById('driver-map');
+      if (!mapEl) return;
+
+      if (typeof L === 'undefined') {
+        mapEl.innerHTML = `
+          <div class="flex h-full flex-col items-center justify-center gap-3 px-8 text-center">
+            <div class="flex h-12 w-12 items-center justify-center rounded-2xl bg-brand-yellow/10 text-brand-yellow">
+              <i data-lucide="map-off" class="h-6 w-6"></i>
+            </div>
+            <p class="text-sm font-bold text-white">Map couldn't load</p>
+            <p class="text-[11px] leading-relaxed text-slate-400">Leaflet needs an internet connection. Check your network and refresh the page.</p>
+          </div>`;
+        if (window.lucide) lucide.createIcons();
+        return;
+      }
+
+      map = L.map(mapEl, {
+        center: APP_STATE.userLocation,
+        zoom: 14,
+        zoomControl: false,
+        attributionControl: false
+      });
+
+      // Separate pane so labels stay crisp while the basemap is darkened.
+      map.createPane('labels');
+      map.getPane('labels').style.zIndex = 460;
+      map.getPane('labels').style.pointerEvents = 'none';
+
+      // Esri "World Dark Gray" basemap — free, no API key, no watermark.
+      L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Dark_Gray_Base/MapServer/tile/{z}/{y}/{x}', {
+        maxNativeZoom: 16,
+        maxZoom: 19
+      }).addTo(map);
+
+      // Street + place labels rendered above the dark basemap.
+      L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Dark_Gray_Reference/MapServer/tile/{z}/{y}/{x}', {
+        maxNativeZoom: 16,
+        maxZoom: 19,
+        pane: 'labels'
+      }).addTo(map);
+
+      L.control.attribution({
+        position: 'bottomleft',
+        prefix: false
+      }).addAttribution('Tiles &copy; Esri &mdash; Esri, DeLorme, NAVTEQ').addTo(map);
+
+      markersLayer = L.layerGroup().addTo(map);
+      map.on('click', event => {
+        if (!routePickMode) return;
+        const coords = [event.latlng.lat, event.latlng.lng];
+        document.getElementById('route-destination-input').value = `Map pin (${coords[0].toFixed(3)}, ${coords[1].toFixed(3)})`;
+        planRoute(coords);
+      });
+
+      renderUserLocationMarker();
+      renderStationMarkers(APP_STATE.stations);
+
+      [50, 200, 600].forEach(ms => setTimeout(() => map && map.invalidateSize(), ms));
+      window.addEventListener('resize', () => map && map.invalidateSize());
+    }
+
+    function renderUserLocationMarker() {
+      const userIcon = L.divIcon({
+        className: 'user-pin-container',
+        html: `<div class="user-pin"><div class="user-pin-core"></div></div>`,
+        iconSize: [24, 24],
+        iconAnchor: [12, 12]
+      });
+      userMarker = L.marker(APP_STATE.userLocation, { icon: userIcon, zIndexOffset: 900 }).addTo(map);
+    }
+
+    function renderStationMarkers(stationsList) {
+      if (!markersLayer) return;
+      markersLayer.clearLayers();
+
+      stationsList.forEach(station => {
+        const isSelected = APP_STATE.selectedStationId === station.id;
+        const isFast = station.kw >= 11;
+
+        const markerHtml = `
+          <div class="station-pin ${isFast ? 'is-fast' : ''} ${isSelected ? 'is-active' : ''}">
+            <div class="station-pin-bubble">
+              <span class="pin-dot ${station.isAvailableNow ? '' : 'opacity-40'}"></span>
+              <span class="pin-kw">${station.kw} kW</span>
+              <span class="pin-price">₨${station.pricePerKwh}</span>
+            </div>
+            <div class="station-pin-tail"></div>
+          </div>`;
+
+        const icon = L.divIcon({
+          className: 'station-pin-container',
+          html: markerHtml,
+          iconSize: [112, 48],
+          iconAnchor: [56, 48]
+        });
+
+        const marker = L.marker(station.coords, { icon: icon });
+        marker.on('click', () => selectStation(station.id));
+        markersLayer.addLayer(marker);
+      });
+    }
+
+    function selectStation(stationId) {
+      playBeep('click');
+      APP_STATE.selectedStationId = stationId;
+      const station = APP_STATE.stations.find(s => s.id === stationId);
+      if (!station) return;
+
+      if (map) map.flyTo(station.coords, 15, { animate: true, duration: 0.8 });
+
+      document.getElementById('sheet-host-avatar').textContent = station.avatar;
+      document.getElementById('sheet-host-name').textContent = station.hostName;
+      document.getElementById('sheet-rating').textContent = station.rating;
+      document.getElementById('sheet-charges-count').textContent = `${station.chargesCount} charges`;
+      document.getElementById('sheet-distance').textContent = formatDistance(distanceMeters(APP_STATE.userLocation, station.coords));
+      document.getElementById('sheet-address').textContent = station.address;
+      document.getElementById('sheet-parking-type').textContent = station.parkingType;
+      document.getElementById('sheet-kw').textContent = `${station.kw} kW`;
+      document.getElementById('sheet-phase').textContent = station.phase;
+      document.getElementById('sheet-connector').textContent = station.connector;
+      document.getElementById('sheet-rate').textContent = `₨${station.pricePerKwh}`;
+      document.getElementById('sheet-availability-time').textContent = `Until ${station.availableUntil} · ${station.hoursRemaining}`;
+      document.getElementById('sheet-host-notes').textContent = `"${station.notes}"`;
+      document.getElementById('sheet-amenities').innerHTML = (station.amenities || []).length
+        ? station.amenities.map(amenity => `<span class="rounded-lg bg-brand-orange/10 px-2 py-1 text-[10px] font-semibold text-slate-200">${amenity}</span>`).join('')
+        : '<span class="text-[10px] text-slate-500">No amenities listed</span>';
+      const verifiedBadge = document.getElementById('sheet-certification-badge');
+      if (verifiedBadge) {
+        verifiedBadge.textContent = station.certified ? 'Certified charger' : 'Certification pending';
+        verifiedBadge.className = station.certified
+          ? 'rounded-full bg-brand-green/10 px-2 py-0.5 text-[10px] font-bold text-brand-green'
+          : 'rounded-full bg-brand-orange/10 px-2 py-0.5 text-[10px] font-bold text-brand-orange';
+      }
+      document.getElementById('book-action-text').textContent = `Book slot · ${station.hostName.split(' ')[0]}'s ${station.kw} kW`;
+
+      calculateEstimatedCharge(station);
+
+      document.getElementById('station-bottom-sheet').classList.remove('translate-y-full');
+      document.getElementById('floating-find-nearest-container').classList.add('hidden');
+      refreshMarkers();
+    }
+
+    function closeStationSheet() {
+      playBeep('click');
+      document.getElementById('station-bottom-sheet').classList.add('translate-y-full');
+      document.getElementById('floating-find-nearest-container').classList.remove('hidden');
+      APP_STATE.selectedStationId = null;
+      refreshMarkers();
+    }
+
+    function selectDuration(hours) {
+      playBeep('click');
+      APP_STATE.selectedDuration = hours;
+      document.querySelectorAll('.dur-btn').forEach(btn => {
+        btn.classList.toggle('is-active', btn.id === `dur-${hours}`);
+      });
+      const station = APP_STATE.stations.find(s => s.id === APP_STATE.selectedStationId);
+      if (station) calculateEstimatedCharge(station);
+    }
+
+    function calculateEstimatedCharge(station) {
+      const dur = APP_STATE.selectedDuration;
+      const kwh = (station.kw * dur * 0.95).toFixed(1);
+      const cost = Math.round(kwh * station.pricePerKwh);
+      const rangeAdded = Math.round(kwh * 6.8);
+
+      document.getElementById('calc-kwh').textContent = kwh;
+      document.getElementById('calc-total-cost').textContent = `₨${cost}`;
+      document.getElementById('calc-range').textContent = `+${rangeAdded} km`;
+    }
+
+    function findNearestStation() {
+      playBeep('click');
+      if (APP_STATE.currentView !== 'driver') switchView('driver');
+
+      let closest = APP_STATE.stations[0];
+      let minDist = Infinity;
+      APP_STATE.stations.forEach(st => {
+        const d = distanceMeters(APP_STATE.userLocation, st.coords);
+        if (d < minDist) { minDist = d; closest = st; }
+      });
+
+      selectStation(closest.id);
+    }
+
+    function centerOnUser() {
+      playBeep('click');
+      if (map) map.flyTo(APP_STATE.userLocation, 15, { animate: true, duration: 0.6 });
+    }
+
+    /* ---------------- Filtering ---------------- */
+    function refreshMarkers() {
+      const q = APP_STATE.searchQuery.toLowerCase().trim();
+      let list = APP_STATE.stations;
+
+      if (APP_STATE.activeFilter === 'fast') list = list.filter(s => s.kw >= 11);
+      else if (APP_STATE.activeFilter === 'standard') list = list.filter(s => s.kw === 7.4);
+      else if (APP_STATE.activeFilter === 'now') list = list.filter(s => s.isAvailableNow);
+
+      if (q) {
+        list = list.filter(s =>
+          s.hostName.toLowerCase().includes(q) ||
+          s.address.toLowerCase().includes(q) ||
+          s.connector.toLowerCase().includes(q) ||
+          `${s.kw} kw`.includes(q)
+        );
+      }
+
+      renderStationMarkers(list);
+    }
+
+    function applyFilter(category) {
+      playBeep('click');
+      APP_STATE.activeFilter = category;
+      ['all', 'fast', 'standard', 'now'].forEach(b => {
+        const el = document.getElementById(`filter-${b}`);
+        if (el) el.classList.toggle('is-active', b === category);
+      });
+      refreshMarkers();
+    }
+
+    function filterStations() {
+      const input = document.getElementById('station-search-input');
+      APP_STATE.searchQuery = input.value;
+      document.getElementById('clear-search-btn').classList.toggle('hidden', input.value.trim().length === 0);
+      refreshMarkers();
+    }
+
+    function clearSearch() {
+      document.getElementById('station-search-input').value = '';
+      document.getElementById('clear-search-btn').classList.add('hidden');
+      APP_STATE.searchQuery = '';
+      refreshMarkers();
+    }
+
+    /* ---------------- Booking ---------------- */
+    function initiateBooking() {
+      playBeep('success');
+      const station = APP_STATE.stations.find(s => s.id === APP_STATE.selectedStationId);
+      if (!station) return;
+
+      closeStationSheet();
+
+      const randomOtp = Math.floor(1000 + Math.random() * 9000);
+      APP_STATE.activeBooking = {
+        stationId: station.id,
+        hostName: station.hostName,
+        address: station.address,
+        kw: station.kw,
+        pricePerKwh: station.pricePerKwh,
+        durationHours: APP_STATE.selectedDuration,
+        otp: randomOtp,
+        isCharging: false,
+        kwhMetered: 0,
+        fareAccrued: 0
+      };
+
+      document.getElementById('active-host-name').textContent = station.hostName;
+      document.getElementById('active-host-address').textContent = station.address;
+      document.getElementById('active-otp').textContent = randomOtp;
+      document.getElementById('live-meter-kwh').textContent = '0.0 kWh';
+      document.getElementById('live-meter-fare').textContent = '₨0';
+      document.getElementById('top-reservation-pill').classList.remove('hidden');
+      document.getElementById('top-reservation-pill').classList.add('flex');
+
+      drawRouteLine(APP_STATE.userLocation, station.coords);
+      document.getElementById('active-session-sheet').classList.remove('translate-y-full');
+    }
+
+    function reopenActiveBookingSheet() {
+      if (!APP_STATE.activeBooking) return;
+      playBeep('click');
+      document.getElementById('active-session-sheet').classList.remove('translate-y-full');
+    }
+
+    function dismissSessionSheet() {
+      playBeep('click');
+      document.getElementById('active-session-sheet').classList.add('translate-y-full');
+    }
+
+    function drawRouteLine(start, end, stops = []) {
+      if (!map) return;
+      if (routePolyline) map.removeLayer(routePolyline);
+      const scale = Math.cos(start[0] * Math.PI / 180);
+      const ex = (end[1] - start[1]) * scale;
+      const ey = end[0] - start[0];
+      const routeLength = ex * ex + ey * ey || 1;
+      const orderedStops = [...stops].sort((a, b) => {
+        const progress = station => {
+          const x = (station.coords[1] - start[1]) * scale;
+          const y = station.coords[0] - start[0];
+          return (x * ex + y * ey) / routeLength;
+        };
+        return progress(a) - progress(b);
+      });
+      const points = [start, ...orderedStops.map(station => station.coords), end];
+      routePolyline = L.polyline(points, {
+        color: '#FFD54A',
+        weight: 4,
+        dashArray: '8, 8',
+        opacity: 0.9
+      }).addTo(map);
+      map.fitBounds([start, end], { padding: [60, 60] });
+    }
+
+    function toggleChargingState() {
+      playBeep('click');
+      const booking = APP_STATE.activeBooking;
+      if (!booking) return;
+
+      const btn = document.getElementById('btn-toggle-charge');
+      const btnText = document.getElementById('btn-toggle-charge-text');
+      const badge = document.getElementById('session-status-badge');
+
+      if (!booking.isCharging) {
+        booking.isCharging = true;
+        btn.classList.add('is-charging');
+        btnText.textContent = "Stop & complete charge";
+        badge.className = 'badge is-live';
+        badge.textContent = 'Charging';
+
+        APP_STATE.chargingInterval = setInterval(() => {
+          booking.kwhMetered += (booking.kw / 3600) * 15;
+          booking.fareAccrued = Math.round(booking.kwhMetered * booking.pricePerKwh);
+          document.getElementById('live-meter-kwh').textContent = `${booking.kwhMetered.toFixed(2)} kWh`;
+          document.getElementById('live-meter-fare').textContent = `₨${booking.fareAccrued}`;
+        }, 800);
+      } else {
+        clearInterval(APP_STATE.chargingInterval);
+        booking.isCharging = false;
+        playBeep('success');
+        alert(`⚡ Charge complete!\nEnergy delivered: ${booking.kwhMetered.toFixed(2)} kWh\nPaid to ${booking.hostName}: ₨${booking.fareAccrued}`);
+        cancelActiveBooking();
+      }
+    }
+
+    function cancelActiveBooking() {
+      playBeep('click');
+      clearInterval(APP_STATE.chargingInterval);
+      if (routePolyline && map) {
+        map.removeLayer(routePolyline);
+        routePolyline = null;
+      }
+      APP_STATE.activeBooking = null;
+
+      const pill = document.getElementById('top-reservation-pill');
+      pill.classList.add('hidden');
+      pill.classList.remove('flex');
+
+      const btn = document.getElementById('btn-toggle-charge');
+      btn.classList.remove('is-charging');
+      document.getElementById('btn-toggle-charge-text').textContent = 'Simulate plug in & start';
+      const badge = document.getElementById('session-status-badge');
+      badge.className = 'badge';
+      badge.textContent = 'Reserved';
+      document.getElementById('live-meter-kwh').textContent = '0.0 kWh';
+      document.getElementById('live-meter-fare').textContent = '₨0';
+
+      dismissSessionSheet();
+    }
+
+    function resetOnboarding() {
+      playBeep('click');
+      clearInterval(APP_STATE.chargingInterval);
+      clearInterval(APP_STATE.incomingTimerInterval);
+      APP_STATE.activeBooking = null;
+      APP_STATE.currentView = 'driver';
+      APP_STATE.onboardingStep = 'role';
+      APP_STATE.onboardingRole = 'driver';
+      APP_STATE.routeDestination = null;
+      APP_STATE.routeStops = [];
+      APP_STATE.evProfile = { model: 'byd-atto-3', connector: 'Type 2', minKw: 0 };
+      document.getElementById('onboarding-screen').classList.remove('hidden');
+      document.getElementById('onboarding-role-step').classList.remove('hidden');
+      document.getElementById('onboarding-driver-step').classList.add('hidden');
+      document.getElementById('onboarding-host-step').classList.add('hidden');
+      document.getElementById('onboarding-next-btn').innerHTML = 'Continue <i data-lucide="arrow-right" class="h-4 w-4"></i>';
+      document.getElementById('onboarding-driver-choice').classList.add('is-selected');
+      document.getElementById('onboarding-host-choice').classList.remove('is-selected');
+      document.getElementById('route-destination-input').value = '';
+      document.getElementById('route-helper-text').classList.add('hidden');
+      if (routePolyline && map) {
+        map.removeLayer(routePolyline);
+        routePolyline = null;
+      }
+      renderStationMarkers(APP_STATE.stations);
+      switchView('driver');
+      updateOnboardingProgress('role');
+      if (window.lucide) lucide.createIcons();
+    }
+
+    /* ---------------- Role switching ---------------- */
+    function switchView(viewName) {
+      playBeep('click');
+      APP_STATE.currentView = viewName;
+
+      const isDriver = viewName === 'driver';
+      document.getElementById('driver-screen').classList.toggle('hidden', !isDriver);
+      document.getElementById('host-screen').classList.toggle('hidden', isDriver);
+
+      document.getElementById('tab-driver-btn').classList.toggle('is-active', isDriver);
+      document.getElementById('tab-host-btn').classList.toggle('is-active', !isDriver);
+      document.getElementById('side-btn-driver').classList.toggle('is-active', isDriver);
+      document.getElementById('side-btn-host').classList.toggle('is-active', !isDriver);
+
+      const helper = document.getElementById('role-helper');
+      if (helper) {
+        helper.textContent = isDriver
+          ? 'Find a nearby charger, compare rates and reserve a slot.'
+          : 'Manage your wallbox, availability and earnings in real time.';
+      }
+
+      if (isDriver && map) setTimeout(() => map.invalidateSize(), 160);
+    }
+
+    /* ---------------- Host ---------------- */
+    function toggleHostLiveStatus() {
+      playBeep('click');
+      APP_STATE.isHostOnline = !APP_STATE.isHostOnline;
+      const online = APP_STATE.isHostOnline;
+      const toggleBtn = document.getElementById('host-live-toggle');
+      const statusText = document.getElementById('host-live-status-text');
+      const islandStatus = document.getElementById('dynamic-island-status');
+
+      toggleBtn.classList.toggle('is-online', online);
+      toggleBtn.classList.toggle('is-offline', !online);
+      statusText.textContent = online ? 'ONLINE' : 'PAUSED';
+
+      islandStatus.innerHTML = online
+        ? '<span class="h-1.5 w-1.5 rounded-full bg-brand-green live-dot"></span><span class="font-bold text-[9px] tracking-wide text-slate-400">ONLINE</span>'
+        : '<span class="h-1.5 w-1.5 rounded-full bg-red-500"></span><span class="font-bold text-[9px] tracking-wide text-slate-500">OFFLINE</span>';
+    }
+
+    function toggleSetupEditModal() {
+      playBeep('click');
+      document.getElementById('host-setup-modal').classList.toggle('hidden');
+      document.getElementById('host-setup-modal').classList.toggle('flex');
+    }
+
+    function updatePriceSlider(val) {
+      document.getElementById('cfg-price-display').textContent = `₨ ${val}`;
+    }
+
+    function saveStationSetup() {
+      playBeep('success');
+      const selectedSpeed = document.querySelector('input[name="cfg-speed"]:checked').value;
+      const price = document.getElementById('cfg-price-slider').value;
+      const fromTime = document.getElementById('cfg-time-from').value;
+      const toTime = document.getElementById('cfg-time-to').value;
+      const notes = document.getElementById('cfg-notes').value;
+
+      APP_STATE.hostStation.speed = parseFloat(selectedSpeed);
+      APP_STATE.hostStation.price = parseInt(price);
+      APP_STATE.hostStation.availableFrom = fromTime;
+      APP_STATE.hostStation.availableTo = toTime;
+      APP_STATE.hostStation.notes = notes;
+
+      document.getElementById('host-disp-speed').textContent = `${selectedSpeed} kW Level 2 Wallbox`;
+      document.getElementById('host-disp-price').textContent = `₨ ${price} / kWh`;
+      document.getElementById('host-disp-hours').textContent = `${fromTime} – ${toTime}`;
+      document.getElementById('host-disp-notes').textContent = `"${notes}"`;
+
+      toggleSetupEditModal();
+    }
+
+    function updateHostFinance() {
+      const investment = Number(document.getElementById('roi-investment').value) || 0;
+      const solarKwh = Number(document.getElementById('roi-solar').value) || 0;
+      const monthlyNet = Math.max(1, solarKwh * APP_STATE.hostStation.price * 0.65);
+      const months = investment ? investment / monthlyNet : 0;
+      const loan = Math.round(investment * 0.8);
+      document.getElementById('roi-breakeven').textContent = `${months.toFixed(1)} months`;
+      document.getElementById('roi-loan').textContent = `₨${loan.toLocaleString()}`;
+    }
+
+    /* ---------------- Incoming request ---------------- */
+    function triggerIncomingBookingSimulator() {
+      playBeep('alert');
+      if (APP_STATE.currentView !== 'host') switchView('host');
+
+      const modal = document.getElementById('incoming-request-modal');
+      modal.classList.remove('hidden');
+
+      let timer = 30;
+      const timerEl = document.getElementById('incoming-timer');
+      timerEl.textContent = `${timer}s`;
+      clearInterval(APP_STATE.incomingTimerInterval);
+
+      APP_STATE.incomingTimerInterval = setInterval(() => {
+        timer--;
+        timerEl.textContent = `${timer}s`;
+        if (timer <= 0) {
+          clearInterval(APP_STATE.incomingTimerInterval);
+          modal.classList.add('hidden');
+        }
+      }, 1000);
+    }
+
+    function acceptIncomingRequest() {
+      playBeep('success');
+      clearInterval(APP_STATE.incomingTimerInterval);
+      document.getElementById('incoming-request-modal').classList.add('hidden');
+
+      APP_STATE.hostStation.earnings += 742;
+      APP_STATE.hostStation.kwhDispensed += 16.5;
+      APP_STATE.hostStation.sessionsCount += 1;
+
+      document.getElementById('host-metric-earnings').textContent = `₨${APP_STATE.hostStation.earnings.toLocaleString()}`;
+      document.getElementById('host-metric-kwh').innerHTML = `${APP_STATE.hostStation.kwhDispensed.toFixed(1)} <span class="text-[11px] font-normal text-slate-400">kWh</span>`;
+      document.getElementById('host-metric-sessions').textContent = `${APP_STATE.hostStation.sessionsCount}`;
+
+      const historyList = document.getElementById('host-history-list');
+      const newCard = document.createElement('div');
+      newCard.className = "rounded-2xl border border-brand-yellow/40 bg-[#12151D] p-4";
+      newCard.innerHTML = `
+        <div class="flex items-center justify-between gap-3">
+          <div class="flex items-center gap-3">
+            <div class="flex h-9 w-9 items-center justify-center rounded-xl bg-brand-yellow text-[10px] font-bold text-black">SZ</div>
+            <div>
+              <div class="text-[12px] font-bold text-white">Salman Zaidi</div>
+              <div class="text-[10px] text-slate-500">Audi e-tron 55 · 1.5 hr</div>
+            </div>
+          </div>
+          <div class="text-right">
+            <div class="font-mono text-[13px] font-bold text-brand-yellow">+₨742</div>
+            <div class="font-mono text-[10px] text-brand-orange">16.5 kWh</div>
+          </div>
+        </div>
+        <div class="mt-2.5 flex items-center justify-between border-t border-white/5 pt-2 text-[10px] text-slate-500">
+          <span>Just now</span>
+          <span class="font-semibold text-brand-yellow">⚡ Accepted · arriving</span>
+        </div>`;
+      historyList.prepend(newCard);
+
+      alert("🎉 Booking accepted!\nSalman Zaidi is on the way to your driveway.\nETA: 10 minutes.");
+    }
+
+    function declineIncomingRequest() {
+      playBeep('click');
+      clearInterval(APP_STATE.incomingTimerInterval);
+      document.getElementById('incoming-request-modal').classList.add('hidden');
+    }
+
+    window.addEventListener('DOMContentLoaded', () => {
+      initMap();
+      if (window.lucide) lucide.createIcons();
+    });
+  </script>
+</body>
+</html>
