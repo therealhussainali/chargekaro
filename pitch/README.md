@@ -21,6 +21,8 @@ All phone imagery is captured from the **real running app** (`../index.html`), n
 | `v-01-cover.png` … `v-09-close.png` | Vertical exports at **2160×3840** (2×), ready for Play Store listings. |
 | `contact-sheet-vertical.html` / `contact-sheet-vertical.png` | One-page overview of all 9 vertical slides. |
 | `assets/*.png` | Real app screenshots at **1536×2580** (3×), used inside both decks. |
+| `ChargeKaro-Pitch-Deck.pdf` | **Share-ready PDF of the landscape deck** — 7 pages, vector (text stays sharp). |
+| `ChargeKaro-Pitch-Deck-Vertical.pdf` | **Share-ready PDF of the vertical deck** — 9 pages, portrait 9:16. |
 
 ### Landscape deck slides
 
@@ -174,6 +176,12 @@ icons, verifies no slide overflows its 1080×1920 box, then screenshots each
 
 `capture-contact.js` renders `contact-sheet.html` full-page at 2×;
 `capture-vertical-contact.js` renders `contact-sheet-vertical.html` the same way.
+
+### 5. PDF export → `ChargeKaro-Pitch-Deck.pdf` / `ChargeKaro-Pitch-Deck-Vertical.pdf`
+
+`export-pdf.js` loads each deck in headless Chromium, injects print CSS
+(`@page` size = slide size, zero margins, one slide per page), and calls
+`page.pdf()` — so the output is **vector**: text and icons stay sharp at any zoom.
 
 ---
 
