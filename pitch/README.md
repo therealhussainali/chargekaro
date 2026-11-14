@@ -24,31 +24,31 @@ All phone imagery is captured from the **real running app** (`../index.html`), n
 
 ### Landscape deck slides
 
-1. **Cover** — “Every driveway becomes a charging station.”
-2. **One network, two winners** — the two-sided opportunity, drivers vs. hosts.
-3. **Driver walkthrough** — plan route → compare/reserve → charge with live metering.
-4. **Host walkthrough** — see the upside → configure the charger → accept demand.
-5. **How a charge happens** — the end-to-end 5-step flow with both outcomes.
-6. **Unit economics** — tariff split, break-even, host earnings, driver savings.
-7. **Closing** — “The grid is already in the driveway.”
+1. **Cover** — “Rent a home charger. Or list your own.”
+2. **One app, two roles** — both sides with their 3 steps: set route / reserve / charge, and list / tariff / approve.
+3. **Driver walkthrough** — 1 · Set your route → 2 · Reserve a slot → 3 · Start charging.
+4. **Host walkthrough** — 1 · List your charger → 2 · Set tariff & hours → 3 · Approve bookings.
+5. **How a charge happens** — the end-to-end five-step loop (each step tagged to its walkthrough step).
+6. **Where the margin comes from** — tariff split, break-even, host earnings, driver savings.
+7. **Closing** — “Three steps to charge. Three steps to earn.”
 
 ### Vertical deck slides
 
 The vertical deck tells the same two-sided story with less text — each slide has
 a step eyebrow (e.g. “Drivers · Step 1 of 3”), a short title, a one-line caption,
 a large phone screenshot, and three feature chips that carry the detail.
+Both decks share one vocabulary: **Driver — set route → reserve → charge;
+Host — list → tariff → approve.**
 
-1. **Cover** — “Every driveway becomes a charging station.” (driver + host phones)
-2. **Drivers · 1/3 — Plan your route** — live map, compatible chargers ranked along the drive.
-3. **Drivers · 2/3 — Compare and reserve** — power, plug, tariff, amenities up front; instant estimate.
-4. **Drivers · 3/3 — Charge with confidence** — OTP handoff, live fare metering, call/chat host.
-5. **Hosts · 1/3 — Your wallbox earns** — earnings dashboard, ROI simulator, 8.5-month break-even.
-6. **Hosts · 2/3 — Stay in control** — power, tariff, availability hours, driveway notes.
-7. **Hosts · 3/3 — Accept demand** — live request with driver ETA and payout.
-8. **How a charge happens** — 5-step end-to-end flow + driver/host outcome cards.
-9. **Closing** — “The grid is already in the driveway.”
-
-Driver slides use yellow accents; host slides use orange.
+1. **Cover** — “Rent a home charger. Or list your own.” (roadmap of both walkthroughs)
+2. **Drivers · 1/3 — Set your route** — EV profile, destination, chargers ranked by plug and detour.
+3. **Drivers · 2/3 — Reserve a slot** — specs and cost shown before booking; request goes to the host.
+4. **Drivers · 3/3 — Start charging** — host approves, OTP handoff, live fare meter.
+5. **Hosts · 1/3 — List your charger** — publish an existing wallbox; earnings dashboard and ROI.
+6. **Hosts · 2/3 — Set tariff & hours** — price per kWh, availability window, driveway notes.
+7. **Hosts · 3/3 — Approve bookings** — live request with driver ETA and payout.
+8. **The full loop** — host setup (Steps 1–2) happens once; every booking runs the five-step flow, tagged to its walkthrough step.
+9. **Closing** — “Three steps to charge. Three steps to earn.”
 
 ### App screenshots in `assets/`
 

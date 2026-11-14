@@ -135,7 +135,7 @@
     .flow-row .fi i { width: 40px; height: 40px; }
     .flow-row .ft { font-size: 33px; font-weight: 800; }
     .flow-row .fsub { margin-top: 6px; font-size: 24px; line-height: 1.35; color: var(--muted); }
-    .flow-row .fn { margin-left: auto; font-family: 'Space Grotesk', sans-serif; font-size: 22px; letter-spacing: .14em; color: var(--dim); }
+    .flow-row .fn { margin-left: auto; font-family: 'Space Grotesk', sans-serif; font-size: 22px; letter-spacing: .08em; color: var(--dim); white-space: nowrap; }
     .v-outcomes { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; padding: 34px 96px 0; }
     .outcome-card {
       display: flex; flex-direction: column; align-items: flex-start; gap: 16px;
@@ -162,8 +162,8 @@
           <div class="cover-mark"><i data-lucide="zap"></i></div>
           <div class="cover-name">Charge<span>Karo</span></div>
         </div>
-        <h2 style="margin-top:44px">Every driveway<br>becomes a<br><span class="accent">charging station.</span></h2>
-        <p>Rent a neighbour’s charger on the go — or rent yours out and earn.</p>
+        <h2 style="margin-top:44px">Rent a home charger.<br>Or list <span class="accent">your own.</span></h2>
+        <p>One app, two roles. Drivers book neighbourhood chargers along their route; hosts publish an existing wallbox and get paid per session. Next: three driver steps, then three host steps.</p>
       </div>
       <div class="v-stage">
         <div class="cover-phones">
@@ -172,9 +172,9 @@
         </div>
       </div>
       <div class="v-chips">
-        <span class="chip"><i data-lucide="navigation"></i> For drivers</span>
-        <span class="chip orange"><i data-lucide="home"></i> For hosts</span>
-        <span class="chip green"><i data-lucide="map"></i> Live map</span>
+        <span class="chip"><i data-lucide="navigation"></i> Driver walkthrough · 3 steps</span>
+        <span class="chip orange"><i data-lucide="home"></i> Host walkthrough · 3 steps</span>
+        <span class="chip green"><i data-lucide="git-merge"></i> Then the full loop</span>
       </div>
     </section>
 
@@ -182,16 +182,16 @@
     <section class="vslide" id="v-2">
       <div class="v-head">
         <div class="v-eyebrow"><span class="dot"></span> Drivers · Step 1 of 3</div>
-        <h2>Plan your <span class="accent">route.</span></h2>
-        <p>See compatible chargers ranked along your drive.</p>
+        <h2>Set your <span class="accent">route.</span></h2>
+        <p>Enter your EV, destination and how much charge you need. The map ranks compatible home chargers along the way by plug type and detour.</p>
       </div>
       <div class="v-stage">
-        <div class="phone-wrap"><img class="phone" src="assets/driver-map.png" alt="Route planner with compatible chargers on a live map"></div>
+        <div class="phone-wrap"><img class="phone" src="assets/driver-map.png" alt="Route planner with compatible chargers ranked on a live map"></div>
       </div>
       <div class="v-chips">
-        <span class="chip"><i data-lucide="map"></i> Live map</span>
-        <span class="chip"><i data-lucide="plug-zap"></i> EV-aware stops</span>
-        <span class="chip"><i data-lucide="route"></i> Route planner</span>
+        <span class="chip"><i data-lucide="car"></i> EV profile</span>
+        <span class="chip"><i data-lucide="plug-zap"></i> Plug compatibility</span>
+        <span class="chip"><i data-lucide="route"></i> Ranked by detour</span>
       </div>
     </section>
 
@@ -199,16 +199,16 @@
     <section class="vslide" id="v-3">
       <div class="v-head">
         <div class="v-eyebrow"><span class="dot"></span> Drivers · Step 2 of 3</div>
-        <h2>Compare and <span class="accent">reserve.</span></h2>
-        <p>Power, plug, tariff and amenities — up front.</p>
+        <h2>Reserve a <span class="accent">slot.</span></h2>
+        <p>Every stop lists power, plug type, tariff and amenities up front. Pick a duration and the app shows the cost before you commit. The request then goes to the host.</p>
       </div>
       <div class="v-stage">
         <div class="phone-wrap"><img class="phone" src="assets/driver-detail.png" alt="Station detail with specs, amenities and booking CTA"></div>
       </div>
       <div class="v-chips">
-        <span class="chip"><i data-lucide="calculator"></i> Instant cost estimate</span>
-        <span class="chip"><i data-lucide="coffee"></i> Guest amenities</span>
-        <span class="chip green"><i data-lucide="badge-check"></i> Certified chargers</span>
+        <span class="chip"><i data-lucide="calculator"></i> Cost shown before booking</span>
+        <span class="chip"><i data-lucide="clock"></i> Duration picker</span>
+        <span class="chip green"><i data-lucide="send"></i> Request sent to host</span>
       </div>
     </section>
 
@@ -216,16 +216,16 @@
     <section class="vslide" id="v-4">
       <div class="v-head">
         <div class="v-eyebrow"><span class="dot"></span> Drivers · Step 3 of 3</div>
-        <h2>Charge with <span class="accent">confidence.</span></h2>
-        <p>One OTP starts the session. Fare meters live.</p>
+        <h2>Start <span class="accent">charging.</span></h2>
+        <p>Once the host approves, share the one-time OTP at the driveway. The session meters live — energy and fare update until you stop.</p>
       </div>
       <div class="v-stage">
         <div class="phone-wrap"><img class="phone" src="assets/driver-charging.png" alt="Active charging session with OTP and live metering"></div>
       </div>
       <div class="v-chips">
         <span class="chip"><i data-lucide="key-round"></i> OTP handoff</span>
-        <span class="chip"><i data-lucide="gauge"></i> Live metering</span>
-        <span class="chip"><i data-lucide="phone"></i> Call / chat host</span>
+        <span class="chip"><i data-lucide="gauge"></i> Live fare meter</span>
+        <span class="chip"><i data-lucide="phone"></i> Call / chat the host</span>
       </div>
     </section>
 
@@ -233,8 +233,8 @@
     <section class="vslide" id="v-5">
       <div class="v-head">
         <div class="v-eyebrow orange"><span class="dot"></span> Hosts · Step 1 of 3</div>
-        <h2>Your wallbox <span class="accent-orange">earns.</span></h2>
-        <p>Earnings, energy sold and charger ROI in one view.</p>
+        <h2>List your <span class="accent-orange">charger.</span></h2>
+        <p>Publish the wallbox you already own as a bookable station. The dashboard tracks earnings, energy sold and payback on the install.</p>
       </div>
       <div class="v-stage">
         <div class="phone-wrap"><img class="phone" src="assets/host-dashboard.png" alt="Host earnings dashboard with ROI simulator"></div>
@@ -242,7 +242,7 @@
       <div class="v-chips">
         <span class="chip orange"><i data-lucide="wallet"></i> Earnings dashboard</span>
         <span class="chip orange"><i data-lucide="calculator"></i> ROI simulator</span>
-        <span class="chip green"><i data-lucide="trending-up"></i> 8.5 mo break-even</span>
+        <span class="chip green"><i data-lucide="trending-up"></i> 8.5-mo break-even</span>
       </div>
     </section>
 
@@ -250,15 +250,15 @@
     <section class="vslide" id="v-6">
       <div class="v-head">
         <div class="v-eyebrow orange"><span class="dot"></span> Hosts · Step 2 of 3</div>
-        <h2>Stay in <span class="accent-orange">control.</span></h2>
-        <p>Set power, tariff, hours and guest notes.</p>
+        <h2>Set tariff <span class="accent-orange">&amp; hours.</span></h2>
+        <p>You choose the price per kWh, the availability window and driveway notes. Drivers only see what you publish.</p>
       </div>
       <div class="v-stage">
         <div class="phone-wrap"><img class="phone" src="assets/host-setup.png" alt="Configure charger modal with power, tariff and hours"></div>
       </div>
       <div class="v-chips">
-        <span class="chip orange"><i data-lucide="sliders-horizontal"></i> Tariff control</span>
-        <span class="chip orange"><i data-lucide="clock"></i> Availability hours</span>
+        <span class="chip orange"><i data-lucide="sliders-horizontal"></i> Price per kWh</span>
+        <span class="chip orange"><i data-lucide="clock"></i> Availability window</span>
         <span class="chip orange"><i data-lucide="notebook-pen"></i> Driveway notes</span>
       </div>
     </section>
@@ -267,8 +267,8 @@
     <section class="vslide" id="v-7">
       <div class="v-head">
         <div class="v-eyebrow orange"><span class="dot"></span> Hosts · Step 3 of 3</div>
-        <h2>Accept <span class="accent-orange">demand.</span></h2>
-        <p>Live request with driver, energy and payout.</p>
+        <h2>Approve <span class="accent-orange">bookings.</span></h2>
+        <p>Each driver reservation arrives as a live request with the driver's ETA and your payout. Accept to confirm the session — or decline.</p>
       </div>
       <div class="v-stage">
         <div class="phone-wrap"><img class="phone" src="assets/host-request.png" alt="Incoming driver request with accept and decline"></div>
@@ -284,50 +284,51 @@
     <section class="vslide" id="v-8">
       <div class="v-head">
         <div class="v-eyebrow dim"><span class="dot"></span> End to end</div>
-        <h2>How a charge <span class="accent">happens.</span></h2>
+        <h2>The full <span class="accent">loop.</span></h2>
+        <p>Host Steps 1–2 happen once — listing the charger and setting the tariff. Every booking then runs these five steps:</p>
       </div>
       <div class="v-stage" style="flex-direction:column; justify-content:center; gap:0;">
         <div class="flow-list">
           <div class="flow-row">
             <div class="fi"><i data-lucide="route"></i></div>
             <div><div class="ft">Driver sets route</div><div class="fsub">EV profile, destination, target charge.</div></div>
-            <div class="fn">01</div>
+            <div class="fn">Driver · 1</div>
           </div>
           <div class="flow-row">
             <div class="fi"><i data-lucide="map-pinned"></i></div>
             <div><div class="ft">App ranks stops</div><div class="fsub">Compatible plugs, detour, speed.</div></div>
-            <div class="fn">02</div>
+            <div class="fn">Driver · 1</div>
           </div>
           <div class="flow-row">
             <div class="fi"><i data-lucide="calendar-check"></i></div>
-            <div><div class="ft">Driver reserves</div><div class="fsub">Duration, estimate, start OTP.</div></div>
-            <div class="fn">03</div>
+            <div><div class="ft">Driver reserves</div><div class="fsub">Duration, estimate, request to host.</div></div>
+            <div class="fn">Driver · 2</div>
           </div>
           <div class="flow-row host">
             <div class="fi"><i data-lucide="home"></i></div>
-            <div><div class="ft">Host accepts</div><div class="fsub">Live request with payout.</div></div>
-            <div class="fn">04</div>
+            <div><div class="ft">Host approves</div><div class="fsub">Live request with ETA and payout.</div></div>
+            <div class="fn">Host · 3</div>
           </div>
           <div class="flow-row host">
             <div class="fi"><i data-lucide="gauge"></i></div>
-            <div><div class="ft">Charge &amp; settle</div><div class="fsub">Live metering, host payout.</div></div>
-            <div class="fn">05</div>
+            <div><div class="ft">Charge &amp; settle</div><div class="fsub">OTP handoff, live metering, payout.</div></div>
+            <div class="fn">Driver · 3</div>
           </div>
         </div>
         <div class="v-outcomes">
           <div class="outcome-card demand">
             <i data-lucide="navigation"></i>
-            <div><div class="oc-t">Driver</div><div class="oc-d">A guaranteed place to plug in, at a fair price.</div></div>
+            <div><div class="oc-t">Driver</div><div class="oc-d">A reserved slot at a known price per kWh.</div></div>
           </div>
           <div class="outcome-card supply">
             <i data-lucide="home"></i>
-            <div><div class="oc-t">Host</div><div class="oc-d">Income from the charger you already own.</div></div>
+            <div><div class="oc-t">Host</div><div class="oc-d">Paid per kWh from a charger you already own.</div></div>
           </div>
         </div>
       </div>
       <div class="v-chips">
-        <span class="chip"><i data-lucide="navigation"></i> Charge anywhere</span>
-        <span class="chip orange"><i data-lucide="home"></i> Earn from your wallbox</span>
+        <span class="chip"><i data-lucide="navigation"></i> Driver · 3 steps</span>
+        <span class="chip orange"><i data-lucide="home"></i> Host · 3 steps</span>
       </div>
     </section>
 
@@ -335,8 +336,9 @@
     <section class="vslide" id="v-9">
       <div class="v-head" style="padding-top:180px">
         <div class="v-eyebrow"><span class="dot"></span> ChargeKaro</div>
-        <h2 style="margin-top:30px">The grid is already<br>in the <span class="accent">driveway.</span></h2>
-        <div class="close-tag">Charge anywhere · Share everywhere</div>
+        <h2 style="margin-top:30px">Three steps to charge.<br>Three steps to <span class="accent">earn.</span></h2>
+        <div class="close-tag">Driver: route → reserve → charge</div>
+        <div class="close-tag" style="margin-top:14px">Host: list → tariff → approve</div>
       </div>
       <div class="v-stage">
         <div class="cover-phones" style="transform:scale(.94); transform-origin:top center;">

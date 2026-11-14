@@ -161,6 +161,7 @@
     .bullets { margin-top: 16px; display: grid; gap: 10px; }
     .bullet { display: flex; gap: 10px; font-size: 13px; line-height: 1.45; color: #B7BFCE; }
     .bullet i { width: 15px; height: 15px; flex: none; margin-top: 2px; color: var(--green); }
+    .bullet strong { color: #E8EBF2; font-weight: 700; }
 
     .step-badge {
       width: 30px; height: 30px; border-radius: 50%;
@@ -320,12 +321,12 @@
             <div class="brandname">Charge<span>Karo</span></div>
           </div>
           <div class="eyebrow" style="margin-top:34px"><span class="dot"></span> Peer-to-peer EV charging · 2026</div>
-          <h1>Every driveway<br>becomes a<br><span class="accent">charging station.</span></h1>
-          <p class="lede">ChargeKaro connects EV drivers with trusted neighbourhood hosts — turning idle home chargers into income and range anxiety into a 20-minute stop.</p>
+          <h1>Rent a home charger.<br>Or <span class="accent">list your own.</span></h1>
+          <p class="lede">ChargeKaro is a two-sided marketplace. Drivers book neighbourhood chargers along their route; hosts publish an existing wallbox and get paid per session. This deck walks both sides, then the full flow.</p>
           <div class="cover-pills">
-            <span class="pill"><i data-lucide="navigation"></i> Demand side · Drivers</span>
-            <span class="pill orange"><i data-lucide="home"></i> Supply side · Hosts</span>
-            <span class="pill"><i data-lucide="map"></i> Live product demo</span>
+            <span class="pill"><i data-lucide="navigation"></i> Demand side · Drivers · 3 steps</span>
+            <span class="pill orange"><i data-lucide="home"></i> Supply side · Hosts · 3 steps</span>
+            <span class="pill"><i data-lucide="git-merge"></i> Live product demo</span>
           </div>
         </div>
         <div class="cover-art">
@@ -353,23 +354,23 @@
     <section class="slide" id="slide-2">
       <div class="two-grid">
         <div class="two-copy">
-          <div class="eyebrow"><span class="dot"></span> One network · two winners</div>
-          <h2>One network.<br>Two sides.<br><span class="accent">Both win.</span></h2>
-          <p class="lede">A driver needs range. A host already has the plug. ChargeKaro is the trust layer, the scheduler and the meter between them.</p>
+          <div class="eyebrow"><span class="dot"></span> One network · two sides</div>
+          <h2>One app.<br>Two roles.<br><span class="accent">One flow.</span></h2>
+          <p class="lede">A driver needs a confirmed place to plug in. A host already has the plug. ChargeKaro provides the listing, the booking and the meter between them.</p>
 
           <div class="two-roles">
             <div class="card role-card">
               <div class="role-head">
                 <div class="role-icon"><i data-lucide="navigation"></i></div>
                 <div>
-                  <div class="role-kicker">Demand side</div>
+                  <div class="role-kicker">Demand side · 3 steps</div>
                   <div class="role-title">Drivers</div>
                 </div>
               </div>
               <div class="bullets">
-                <div class="bullet"><i data-lucide="check-circle-2"></i><span>Plan a route and see compatible stops ranked by detour, speed and availability.</span></div>
-                <div class="bullet"><i data-lucide="check-circle-2"></i><span>Compare kW, connector, tariff and amenities before booking.</span></div>
-                <div class="bullet"><i data-lucide="check-circle-2"></i><span>Reserve a slot, share an OTP and watch energy and fare update live.</span></div>
+                <div class="bullet"><i data-lucide="check-circle-2"></i><span><strong>Set your route</strong> — enter your EV, destination and target charge; stops are ranked by plug type and detour.</span></div>
+                <div class="bullet"><i data-lucide="check-circle-2"></i><span><strong>Reserve a slot</strong> — power, plug, tariff and amenities up front, with the cost shown before booking.</span></div>
+                <div class="bullet"><i data-lucide="check-circle-2"></i><span><strong>Start charging</strong> — share a one-time OTP with the host and watch energy and fare meter live.</span></div>
               </div>
             </div>
 
@@ -377,14 +378,14 @@
               <div class="role-head">
                 <div class="role-icon orange"><i data-lucide="home"></i></div>
                 <div>
-                  <div class="role-kicker">Supply side</div>
+                  <div class="role-kicker">Supply side · 3 steps</div>
                   <div class="role-title">Hosts</div>
                 </div>
               </div>
               <div class="bullets">
-                <div class="bullet"><i data-lucide="check-circle-2"></i><span>Publish an existing wallbox with power, plug type and guest amenities.</span></div>
-                <div class="bullet"><i data-lucide="check-circle-2"></i><span>Set your tariff, availability window and the drivers you accept.</span></div>
-                <div class="bullet"><i data-lucide="check-circle-2"></i><span>Track earnings, energy sold and a charger ROI simulator in one place.</span></div>
+                <div class="bullet"><i data-lucide="check-circle-2"></i><span><strong>List your charger</strong> — publish an existing wallbox with power, plug type and guest amenities.</span></div>
+                <div class="bullet"><i data-lucide="check-circle-2"></i><span><strong>Set tariff &amp; hours</strong> — price per kWh, availability window and driveway notes.</span></div>
+                <div class="bullet"><i data-lucide="check-circle-2"></i><span><strong>Approve bookings</strong> — accept or decline each live request, paid per completed session.</span></div>
               </div>
             </div>
           </div>
@@ -403,7 +404,7 @@
       </div>
       <div class="slide-foot">
         <span><strong>ChargeKaro</strong> · Two-sided marketplace</span>
-        <span>02 · The opportunity</span>
+        <span>02 · The two sides</span>
       </div>
     </section>
 
@@ -417,51 +418,51 @@
 
         <div class="walk-head" style="margin-top:34px">
           <div>
-            <div class="eyebrow"><span class="dot"></span> The driver experience</div>
-            <h2 style="margin-top:14px">From low battery to<br><span class="accent">booked in under a minute.</span></h2>
+            <div class="eyebrow"><span class="dot"></span> Driver walkthrough · steps 1–3</div>
+            <h2 style="margin-top:14px">Driver: set route →<br><span class="accent">reserve → charge.</span></h2>
           </div>
-          <p class="lede">Built around range confidence — not endless browsing. Every step answers: can I get there, what will it cost, and is the plug free?</p>
+          <p class="lede">Three steps, one app. Each one maps onto the five-step flow on slide 05.</p>
         </div>
 
         <div class="walk-row">
           <div class="walk-item">
             <div class="step-badge">1</div>
-            <div class="phone-wrap" style="margin-top:14px"><img class="phone" src="assets/driver-map.png" alt="Plan route and see compatible chargers"></div>
+            <div class="phone-wrap" style="margin-top:14px"><img class="phone" src="assets/driver-map.png" alt="Set your route and see compatible chargers"></div>
             <div class="walk-caption">
-              <div class="wc-title">Set the route</div>
-              <div class="wc-text">Add your EV and destination. ChargeKaro ranks compatible stops along the way.</div>
+              <div class="wc-title">1 · Set your route</div>
+              <div class="wc-text">Add your EV, destination and target charge. Compatible stops are ranked by plug type and detour.</div>
             </div>
           </div>
 
           <div class="walk-item">
             <div class="step-badge">2</div>
-            <div class="phone-wrap" style="margin-top:14px"><img class="phone" src="assets/driver-detail.png" alt="Compare and reserve a charger"></div>
+            <div class="phone-wrap" style="margin-top:14px"><img class="phone" src="assets/driver-detail.png" alt="Reserve a slot"></div>
             <div class="walk-caption">
-              <div class="wc-title">Compare and reserve</div>
-              <div class="wc-text">Power, plug, tariff, amenities and an instant energy and cost estimate.</div>
+              <div class="wc-title">2 · Reserve a slot</div>
+              <div class="wc-text">Power, plug, tariff and amenities up front — the cost is shown before booking. The request goes to the host.</div>
             </div>
           </div>
 
           <div class="walk-item">
             <div class="step-badge">3</div>
-            <div class="phone-wrap" style="margin-top:14px"><img class="phone" src="assets/driver-charging.png" alt="Charge with live metering"></div>
+            <div class="phone-wrap" style="margin-top:14px"><img class="phone" src="assets/driver-charging.png" alt="Start charging with live metering"></div>
             <div class="walk-caption">
-              <div class="wc-title">Charge with confidence</div>
-              <div class="wc-text">A one-time OTP starts the session. Energy and fare meter live until you stop.</div>
+              <div class="wc-title">3 · Start charging</div>
+              <div class="wc-text">Share the one-time OTP at the driveway. Energy and fare meter live until you stop.</div>
             </div>
           </div>
         </div>
 
         <div class="walk-strip">
           <span class="pill"><i data-lucide="map"></i> Live map</span>
-          <span class="pill"><i data-lucide="plug-zap"></i> EV-aware compatibility</span>
+          <span class="pill"><i data-lucide="plug-zap"></i> Plug compatibility</span>
           <span class="pill"><i data-lucide="shield-check"></i> OTP handoff</span>
           <span class="pill"><i data-lucide="gauge"></i> Live metering</span>
         </div>
       </div>
       <div class="slide-foot">
         <span><strong>Demand side</strong> · Driver walkthrough</span>
-        <span>03 · Find · Reserve · Charge</span>
+        <span>03 · Set route → Reserve → Charge</span>
       </div>
     </section>
 
@@ -475,37 +476,37 @@
 
         <div class="walk-head" style="margin-top:34px">
           <div>
-            <div class="eyebrow orange"><span class="dot"></span> The host experience</div>
-            <h2 style="margin-top:14px">Your wallbox earns<br><span class="accent-orange">while you sleep.</span></h2>
+            <div class="eyebrow orange"><span class="dot"></span> Host walkthrough · steps 1–3</div>
+            <h2 style="margin-top:14px">Host: list charger →<br><span class="accent-orange">tariff → approve.</span></h2>
           </div>
-          <p class="lede">An existing asset becomes a small business. Hosts stay in control of price, hours and who gets access.</p>
+          <p class="lede">Three steps. The driver's reservation (Driver Step 2) arrives here as the live request.</p>
         </div>
 
         <div class="walk-row">
           <div class="walk-item">
             <div class="step-badge orange">1</div>
-            <div class="phone-wrap" style="margin-top:14px"><img class="phone" src="assets/host-dashboard.png" alt="Host earnings dashboard"></div>
+            <div class="phone-wrap" style="margin-top:14px"><img class="phone" src="assets/host-dashboard.png" alt="List your charger and track earnings"></div>
             <div class="walk-caption">
-              <div class="wc-title">See the upside</div>
-              <div class="wc-text">Earnings, energy sold, rating and a charger ROI simulator in one view.</div>
+              <div class="wc-title">1 · List your charger</div>
+              <div class="wc-text">Publish an existing wallbox: power, plug type and guest amenities. Earnings and ROI tracked in the dashboard.</div>
             </div>
           </div>
 
           <div class="walk-item">
             <div class="step-badge orange">2</div>
-            <div class="phone-wrap" style="margin-top:14px"><img class="phone" src="assets/host-setup.png" alt="Configure charger specs"></div>
+            <div class="phone-wrap" style="margin-top:14px"><img class="phone" src="assets/host-setup.png" alt="Set tariff and hours"></div>
             <div class="walk-caption">
-              <div class="wc-title">Stay in control</div>
-              <div class="wc-text">Set kW, tariff, hours and amenities. Drivers only see what you publish.</div>
+              <div class="wc-title">2 · Set tariff &amp; hours</div>
+              <div class="wc-text">Price per kWh, availability window and driveway notes. Only published details are visible to drivers.</div>
             </div>
           </div>
 
           <div class="walk-item">
             <div class="step-badge orange">3</div>
-            <div class="phone-wrap" style="margin-top:14px"><img class="phone" src="assets/host-request.png" alt="Accept an incoming driver request"></div>
+            <div class="phone-wrap" style="margin-top:14px"><img class="phone" src="assets/host-request.png" alt="Approve an incoming booking request"></div>
             <div class="walk-caption">
-              <div class="wc-title">Accept demand</div>
-              <div class="wc-text">A live request shows the driver, energy and payout. Accept or decline.</div>
+              <div class="wc-title">3 · Approve bookings</div>
+              <div class="wc-text">Each reservation arrives with the driver's ETA and your payout. Accept to confirm the session — or decline.</div>
             </div>
           </div>
         </div>
@@ -519,7 +520,7 @@
       </div>
       <div class="slide-foot">
         <span><strong>Supply side</strong> · Host walkthrough</span>
-        <span>04 · List · Earn · Manage</span>
+        <span>04 · List → Tariff → Approve</span>
       </div>
     </section>
 
@@ -532,9 +533,9 @@
         </div>
 
         <div class="flow-head" style="margin-top:104px">
-          <div class="eyebrow" style="justify-content:center"><span class="dot"></span> End-to-end</div>
+          <div class="eyebrow" style="justify-content:center"><span class="dot"></span> End to end</div>
           <h2>How a charge happens.</h2>
-          <p class="lede">One flow connects a driver’s route, a host’s calendar and a live meter — with a verified handoff at the driveway.</p>
+          <p class="lede">The host lists the charger and sets tariff once (Host Steps 1–2). Every booking then runs this five-step loop:</p>
         </div>
 
         <div class="flow-line">
@@ -553,20 +554,20 @@
           <div class="flow-step">
             <div class="flow-icon"><i data-lucide="calendar-check"></i></div>
             <div class="fs-num">STEP 03</div>
-            <div class="fs-title">Reserve a slot</div>
-            <div class="fs-text">Duration, instant estimate and a start OTP.</div>
+            <div class="fs-title">Driver reserves</div>
+            <div class="fs-text">Duration, instant estimate, request to the host.</div>
           </div>
           <div class="flow-step">
             <div class="flow-icon"><i data-lucide="home"></i></div>
             <div class="fs-num">STEP 04</div>
-            <div class="fs-title">Host accepts</div>
-            <div class="fs-text">Live request with driver, energy and payout.</div>
+            <div class="fs-title">Host approves</div>
+            <div class="fs-text">Live request with driver ETA and payout.</div>
           </div>
           <div class="flow-step">
             <div class="flow-icon"><i data-lucide="gauge"></i></div>
             <div class="fs-num">STEP 05</div>
-            <div class="fs-title">Charge & settle</div>
-            <div class="fs-text">Live metering, fare accrued and host payout.</div>
+            <div class="fs-title">Charge &amp; settle</div>
+            <div class="fs-text">OTP handoff, live metering, host payout.</div>
           </div>
         </div>
 
@@ -575,14 +576,14 @@
             <div class="oi"><i data-lucide="navigation"></i></div>
             <div>
               <div class="ot">Driver outcome</div>
-              <div class="ov">Range confidence, a transparent price and a guaranteed place to plug in.</div>
+              <div class="ov">A reserved slot at a known price per kWh, with the fare metered live.</div>
             </div>
           </div>
           <div class="card outcome supply">
             <div class="oi"><i data-lucide="home"></i></div>
             <div>
               <div class="ot">Host outcome</div>
-              <div class="ov">New income from an asset that already exists — with full control over access.</div>
+              <div class="ov">Paid per kWh from a charger that already exists — with control over price and access.</div>
             </div>
           </div>
         </div>
@@ -613,8 +614,8 @@
       <div class="econ-grid">
         <div class="econ-copy">
           <div class="eyebrow orange"><span class="dot"></span> Unit economics</div>
-          <h2>Designed to<br><span class="accent-orange">pay for itself.</span></h2>
-          <p class="lede">The host sells at a premium to grid cost. The driver pays less than public fast charging — and both sides see the number before they commit.</p>
+          <h2>Where the <span class="accent-orange">margin</span> comes from.</h2>
+          <p class="lede">The host sets a price per kWh above grid cost and keeps the difference. The driver still pays less than public DC fast charging — and both sides see the numbers before committing.</p>
 
           <div class="econ-bar">
             <div class="bar-track">
@@ -638,7 +639,7 @@
             <div class="es-icon"><i data-lucide="piggy-bank"></i></div>
             <div>
               <div class="es-value">Drivers save ~₨2,000</div>
-              <div class="es-label">On a 40 kWh top-up versus public DC fast charging — with a guaranteed, pre-booked plug.</div>
+              <div class="es-label">On a 40 kWh top-up versus public DC fast charging — at a pre-booked, guaranteed plug.</div>
             </div>
           </div>
 
@@ -656,7 +657,7 @@
       </div>
       <div class="slide-foot">
         <span><strong>ChargeKaro</strong> · Host economics</span>
-        <span>06 · Why it works</span>
+        <span>06 · How the money works</span>
       </div>
     </section>
 
@@ -668,12 +669,12 @@
       </div>
 
       <div class="close-wrap">
-        <div class="eyebrow"><span class="dot"></span> The opportunity</div>
-        <h1>The grid is already<br>in the <span class="accent">driveway.</span></h1>
-        <p class="lede">ChargeKaro turns idle home chargers into a trusted, bookable network — and gives drivers a reliable place to plug in.</p>
+        <div class="eyebrow"><span class="dot"></span> ChargeKaro</div>
+        <h1>Three steps to charge.<br>Three steps to <span class="accent">earn.</span></h1>
+        <p class="lede">Driver: set your route, reserve a slot, start charging. Host: list your charger, set tariff and hours, approve bookings.</p>
         <div class="close-pills">
-          <span class="pill"><i data-lucide="navigation"></i> For drivers · charge anywhere</span>
-          <span class="pill orange"><i data-lucide="home"></i> For hosts · earn from the asset you own</span>
+          <span class="pill"><i data-lucide="navigation"></i> Drivers · route → reserve → charge</span>
+          <span class="pill orange"><i data-lucide="home"></i> Hosts · list → tariff → approve</span>
         </div>
       </div>
 
