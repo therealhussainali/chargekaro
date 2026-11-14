@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>ChargeKaro — Deck Contact Sheet</title>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: #050608;
+      color: #E8EBF2;
+      font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
+      padding: 56px 60px 64px;
+    }
+    .head { display: flex; align-items: flex-end; justify-content: space-between; margin-bottom: 34px; }
+    .head h1 { font-family: 'Space Grotesk', sans-serif; font-size: 30px; letter-spacing: -.02em; }
+    .head h1 span { color: #FFD54A; }
+    .head p { font-size: 12px; color: #7C8597; margin-top: 6px; }
+    .head .meta { text-align: right; font-size: 11px; color: #6B7486; line-height: 1.7; }
+    .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 26px; }
+    .item { }
+    .thumb {
+      border-radius: 12px; overflow: hidden; border: 1px solid rgba(255,255,255,.08);
+      box-shadow: 0 24px 60px -30px rgba(0,0,0,.9);
+      background: #08090C;
+    }
+    .thumb img { display: block; width: 100%; height: auto; }
+    .cap { display: flex; align-items: baseline; gap: 10px; margin-top: 10px; }
+    .cap .num { font-family: 'Space Grotesk', sans-serif; font-size: 11px; color: #FFD54A; letter-spacing: .12em; }
+    .cap .t { font-size: 13px; font-weight: 700; }
+    .cap .d { font-size: 11px; color: #7C8597; margin-left: auto; }
+  </style>
+</head>
+<body>
+  <div class="head">
+    <div>
+      <h1>Charge<span>Karo</span> — Pitch Deck</h1>
+      <p>Two-sided EV charging marketplace · supply (hosts) &amp; demand (drivers)</p>
+    </div>
+    <div class="meta">
+      7 slides · 1600×900 (exported 3200×1800)<br>
+      Real app screenshots · no placeholder UI
+    </div>
+  </div>
+  <div class="grid">
+    <div class="item">
+      <div class="thumb"><img src="01-cover.png" alt="Cover"></div>
+      <div class="cap"><span class="num">01</span><span class="t">Cover</span><span class="d">The opportunity</span></div>
+    </div>
+    <div class="item">
+      <div class="thumb"><img src="02-opportunity.png" alt="Two sides"></div>
+      <div class="cap"><span class="num">02</span><span class="t">One network, two winners</span><span class="d">Supply + demand</span></div>
+    </div>
+    <div class="item">
+      <div class="thumb"><img src="03-demand.png" alt="Driver walkthrough"></div>
+      <div class="cap"><span class="num">03</span><span class="t">Driver walkthrough</span><span class="d">Find · reserve · charge</span></div>
+    </div>
+    <div class="item">
+      <div class="thumb"><img src="04-supply.png" alt="Host walkthrough"></div>
+      <div class="cap"><span class="num">04</span><span class="t">Host walkthrough</span><span class="d">List · earn · manage</span></div>
+    </div>
+    <div class="item">
+      <div class="thumb"><img src="05-flow.png" alt="End-to-end flow"></div>
+      <div class="cap"><span class="num">05</span><span class="t">How a charge happens</span><span class="d">End-to-end flow</span></div>
+    </div>
+    <div class="item">
+      <div class="thumb"><img src="06-economics.png" alt="Unit economics"></div>
+      <div class="cap"><span class="num">06</span><span class="t">Unit economics</span><span class="d">Why it works</span></div>
+    </div>
+    <div class="item">
+      <div class="thumb"><img src="07-close.png" alt="Closing"></div>
+      <div class="cap"><span class="num">07</span><span class="t">Closing</span><span class="d">Thank you</span></div>
+    </div>
+  </div>
+</body>
+</html>

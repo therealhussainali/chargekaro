@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ChargeKaro — Vertical Deck (Play Store style)</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg: #08090C;
+      --surface: #10131A;
+      --line: rgba(255,255,255,.08);
+      --yellow: #FFD54A;
+      --orange: #FF7A45;
+      --green: #34D399;
+      --muted: #98A2B3;
+      --dim: #6B7486;
+    }
+    html { -webkit-font-smoothing: antialiased; }
+    body { background: #050608; color: #E8EBF2; font-family: 'Plus Jakarta Sans', system-ui, sans-serif; }
+    .stack { display: flex; flex-direction: column; align-items: center; gap: 40px; padding: 40px; }
+
+    /* ---------- Portrait slide (9:16, Play Store ready) ---------- */
+    .vslide {
+      position: relative;
+      width: 1080px;
+      height: 1920px;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      background: var(--bg);
+      border-radius: 20px;
+      isolation: isolate;
+    }
+    .vslide::before {
+      content: '';
+      position: absolute; inset: 0;
+      background:
+        radial-gradient(60% 34% at 50% -4%, rgba(255,213,74,.10), transparent 68%),
+        radial-gradient(56% 34% at 50% 104%, rgba(255,122,69,.09), transparent 68%);
+      pointer-events: none;
+      z-index: 0;
+    }
+    .vslide::after {
+      content: '';
+      position: absolute; inset: 0;
+      background-image:
+        linear-gradient(rgba(255,255,255,.025) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,.025) 1px, transparent 1px);
+      background-size: 72px 72px;
+      -webkit-mask-image: radial-gradient(circle at 50% 34%, #000 0%, transparent 74%);
+      mask-image: radial-gradient(circle at 50% 34%, #000 0%, transparent 74%);
+      pointer-events: none;
+      z-index: 0;
+    }
+    .vslide > * { position: relative; z-index: 1; }
+
+    /* ---------- Header ---------- */
+    .v-head { padding: 96px 84px 0; text-align: center; }
+    .v-eyebrow {
+      display: inline-flex; align-items: center; gap: 14px;
+      font-size: 23px; font-weight: 800; letter-spacing: .22em; text-transform: uppercase;
+      color: var(--yellow);
+    }
+    .v-eyebrow .dot { width: 10px; height: 10px; border-radius: 50%; background: currentColor; }
+    .v-eyebrow.orange { color: var(--orange); }
+    .v-eyebrow.dim { color: var(--dim); }
+    .v-head h2 {
+      margin-top: 26px;
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 76px; line-height: 1.02; letter-spacing: -.03em; font-weight: 700;
+      text-wrap: balance;
+    }
+    .v-head p { margin: 22px auto 0; max-width: 800px; font-size: 29px; line-height: 1.45; color: var(--muted); }
+    .accent { color: var(--yellow); }
+    .accent-orange { color: var(--orange); }
+
+    /* ---------- Phone stage ---------- */
+    .v-stage { flex: 1; min-height: 0; position: relative; display: flex; align-items: center; justify-content: center; }
+    .phone-wrap { position: relative; display: flex; }
+    .phone-wrap::before {
+      content: '';
+      position: absolute; inset: -10% -22%;
+      background: radial-gradient(ellipse at center, rgba(255,213,74,.20), rgba(255,122,69,.07) 46%, transparent 72%);
+      filter: blur(46px);
+      z-index: -1;
+    }
+    .phone { display: block; width: var(--w, 700px); height: auto; filter: drop-shadow(0 54px 90px rgba(0,0,0,.62)); }
+
+    /* ---------- Feature chips ---------- */
+    .v-chips { display: flex; flex-wrap: wrap; justify-content: center; gap: 16px; padding: 0 72px 88px; }
+    .chip {
+      display: inline-flex; align-items: center; gap: 12px;
+      padding: 16px 26px; border-radius: 999px;
+      border: 1px solid var(--line); background: rgba(16,19,26,.82);
+      font-size: 24px; font-weight: 700; color: #C7CEDA;
+    }
+    .chip i { width: 25px; height: 25px; color: var(--yellow); }
+    .chip.orange i { color: var(--orange); }
+    .chip.green i { color: var(--green); }
+
+    /* ---------- Cover ---------- */
+    .cover-head { padding-top: 130px; }
+    .cover-brand { display: flex; align-items: center; justify-content: center; gap: 22px; }
+    .cover-mark {
+      width: 92px; height: 92px; border-radius: 26px;
+      display: flex; align-items: center; justify-content: center;
+      background: var(--yellow); color: #0B0D11;
+      box-shadow: 0 18px 44px -10px rgba(255,213,74,.55);
+    }
+    .cover-mark i { width: 46px; height: 46px; stroke-width: 2.6; }
+    .cover-name { font-family: 'Space Grotesk', sans-serif; font-size: 46px; font-weight: 700; letter-spacing: -.02em; }
+    .cover-name span { color: var(--yellow); }
+    .cover-phones { position: relative; width: 800px; height: 1030px; }
+    .cover-phones .back { position: absolute; right: 0; top: 96px; --w: 470px; transform: rotate(5deg); opacity: .88; }
+    .cover-phones .front { position: absolute; left: 20px; top: 0; --w: 545px; transform: rotate(-3deg); z-index: 2; }
+
+    /* ---------- Flow ---------- */
+    .flow-list { display: grid; gap: 20px; padding: 0 96px; }
+    .flow-row {
+      display: flex; align-items: center; gap: 28px;
+      padding: 26px 30px; border-radius: 24px;
+      border: 1px solid var(--line); background: rgba(16,19,26,.78);
+    }
+    .flow-row .fi {
+      width: 84px; height: 84px; border-radius: 24px; flex: none;
+      display: flex; align-items: center; justify-content: center;
+      background: rgba(255,213,74,.12); color: var(--yellow);
+    }
+    .flow-row.host .fi { background: rgba(255,122,69,.12); color: var(--orange); }
+    .flow-row .fi i { width: 40px; height: 40px; }
+    .flow-row .ft { font-size: 33px; font-weight: 800; }
+    .flow-row .fsub { margin-top: 6px; font-size: 24px; line-height: 1.35; color: var(--muted); }
+    .flow-row .fn { margin-left: auto; font-family: 'Space Grotesk', sans-serif; font-size: 22px; letter-spacing: .14em; color: var(--dim); }
+    .v-outcomes { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; padding: 34px 96px 0; }
+    .outcome-card {
+      display: flex; flex-direction: column; align-items: flex-start; gap: 16px;
+      padding: 30px 28px; border-radius: 24px;
+      border: 1px solid var(--line); background: rgba(16,19,26,.85);
+    }
+    .outcome-card i { width: 36px; height: 36px; }
+    .outcome-card.demand i { color: var(--yellow); }
+    .outcome-card.supply i { color: var(--orange); }
+    .outcome-card .oc-t { font-size: 20px; font-weight: 800; letter-spacing: .18em; text-transform: uppercase; color: var(--dim); }
+    .outcome-card .oc-d { margin-top: 8px; font-size: 26px; line-height: 1.4; font-weight: 700; color: #DCE2EE; }
+
+    /* ---------- Close ---------- */
+    .close-tag { margin-top: 26px; font-size: 25px; letter-spacing: .22em; text-transform: uppercase; color: var(--dim); }
+  </style>
+</head>
+<body>
+  <div class="stack">
+
+    <!-- ============ 1 · COVER ============ -->
+    <section class="vslide" id="v-1">
+      <div class="v-head cover-head">
+        <div class="cover-brand">
+          <div class="cover-mark"><i data-lucide="zap"></i></div>
+          <div class="cover-name">Charge<span>Karo</span></div>
+        </div>
+        <h2 style="margin-top:44px">Every driveway<br>becomes a<br><span class="accent">charging station.</span></h2>
+        <p>Rent a neighbour’s charger on the go — or rent yours out and earn.</p>
+      </div>
+      <div class="v-stage">
+        <div class="cover-phones">
+          <div class="phone-wrap back"><img class="phone" style="--w:470px" src="assets/host-dashboard.png" alt="Host dashboard"></div>
+          <div class="phone-wrap front"><img class="phone" style="--w:545px" src="assets/driver-map.png" alt="Driver map"></div>
+        </div>
+      </div>
+      <div class="v-chips">
+        <span class="chip"><i data-lucide="navigation"></i> For drivers</span>
+        <span class="chip orange"><i data-lucide="home"></i> For hosts</span>
+        <span class="chip green"><i data-lucide="map"></i> Live map</span>
+      </div>
+    </section>
+
+    <!-- ============ 2 · DRIVER · ROUTE ============ -->
+    <section class="vslide" id="v-2">
+      <div class="v-head">
+        <div class="v-eyebrow"><span class="dot"></span> Drivers · Step 1 of 3</div>
+        <h2>Plan your <span class="accent">route.</span></h2>
+        <p>See compatible chargers ranked along your drive.</p>
+      </div>
+      <div class="v-stage">
+        <div class="phone-wrap"><img class="phone" src="assets/driver-map.png" alt="Route planner with compatible chargers on a live map"></div>
+      </div>
+      <div class="v-chips">
+        <span class="chip"><i data-lucide="map"></i> Live map</span>
+        <span class="chip"><i data-lucide="plug-zap"></i> EV-aware stops</span>
+        <span class="chip"><i data-lucide="route"></i> Route planner</span>
+      </div>
+    </section>
+
+    <!-- ============ 3 · DRIVER · RESERVE ============ -->
+    <section class="vslide" id="v-3">
+      <div class="v-head">
+        <div class="v-eyebrow"><span class="dot"></span> Drivers · Step 2 of 3</div>
+        <h2>Compare and <span class="accent">reserve.</span></h2>
+        <p>Power, plug, tariff and amenities — up front.</p>
+      </div>
+      <div class="v-stage">
+        <div class="phone-wrap"><img class="phone" src="assets/driver-detail.png" alt="Station detail with specs, amenities and booking CTA"></div>
+      </div>
+      <div class="v-chips">
+        <span class="chip"><i data-lucide="calculator"></i> Instant cost estimate</span>
+        <span class="chip"><i data-lucide="coffee"></i> Guest amenities</span>
+        <span class="chip green"><i data-lucide="badge-check"></i> Certified chargers</span>
+      </div>
+    </section>
+
+    <!-- ============ 4 · DRIVER · CHARGE ============ -->
+    <section class="vslide" id="v-4">
+      <div class="v-head">
+        <div class="v-eyebrow"><span class="dot"></span> Drivers · Step 3 of 3</div>
+        <h2>Charge with <span class="accent">confidence.</span></h2>
+        <p>One OTP starts the session. Fare meters live.</p>
+      </div>
+      <div class="v-stage">
+        <div class="phone-wrap"><img class="phone" src="assets/driver-charging.png" alt="Active charging session with OTP and live metering"></div>
+      </div>
+      <div class="v-chips">
+        <span class="chip"><i data-lucide="key-round"></i> OTP handoff</span>
+        <span class="chip"><i data-lucide="gauge"></i> Live metering</span>
+        <span class="chip"><i data-lucide="phone"></i> Call / chat host</span>
+      </div>
+    </section>
+
+    <!-- ============ 5 · HOST · EARNINGS ============ -->
+    <section class="vslide" id="v-5">
+      <div class="v-head">
+        <div class="v-eyebrow orange"><span class="dot"></span> Hosts · Step 1 of 3</div>
+        <h2>Your wallbox <span class="accent-orange">earns.</span></h2>
+        <p>Earnings, energy sold and charger ROI in one view.</p>
+      </div>
+      <div class="v-stage">
+        <div class="phone-wrap"><img class="phone" src="assets/host-dashboard.png" alt="Host earnings dashboard with ROI simulator"></div>
+      </div>
+      <div class="v-chips">
+        <span class="chip orange"><i data-lucide="wallet"></i> Earnings dashboard</span>
+        <span class="chip orange"><i data-lucide="calculator"></i> ROI simulator</span>
+        <span class="chip green"><i data-lucide="trending-up"></i> 8.5 mo break-even</span>
+      </div>
+    </section>
+
+    <!-- ============ 6 · HOST · CONTROL ============ -->
+    <section class="vslide" id="v-6">
+      <div class="v-head">
+        <div class="v-eyebrow orange"><span class="dot"></span> Hosts · Step 2 of 3</div>
+        <h2>Stay in <span class="accent-orange">control.</span></h2>
+        <p>Set power, tariff, hours and guest notes.</p>
+      </div>
+      <div class="v-stage">
+        <div class="phone-wrap"><img class="phone" src="assets/host-setup.png" alt="Configure charger modal with power, tariff and hours"></div>
+      </div>
+      <div class="v-chips">
+        <span class="chip orange"><i data-lucide="sliders-horizontal"></i> Tariff control</span>
+        <span class="chip orange"><i data-lucide="clock"></i> Availability hours</span>
+        <span class="chip orange"><i data-lucide="notebook-pen"></i> Driveway notes</span>
+      </div>
+    </section>
+
+    <!-- ============ 7 · HOST · REQUEST ============ -->
+    <section class="vslide" id="v-7">
+      <div class="v-head">
+        <div class="v-eyebrow orange"><span class="dot"></span> Hosts · Step 3 of 3</div>
+        <h2>Accept <span class="accent-orange">demand.</span></h2>
+        <p>Live request with driver, energy and payout.</p>
+      </div>
+      <div class="v-stage">
+        <div class="phone-wrap"><img class="phone" src="assets/host-request.png" alt="Incoming driver request with accept and decline"></div>
+      </div>
+      <div class="v-chips">
+        <span class="chip orange"><i data-lucide="bell-ring"></i> Accept / decline</span>
+        <span class="chip orange"><i data-lucide="car"></i> Driver ETA shown</span>
+        <span class="chip green"><i data-lucide="banknote"></i> Payout per session</span>
+      </div>
+    </section>
+
+    <!-- ============ 8 · FLOW ============ -->
+    <section class="vslide" id="v-8">
+      <div class="v-head">
+        <div class="v-eyebrow dim"><span class="dot"></span> End to end</div>
+        <h2>How a charge <span class="accent">happens.</span></h2>
+      </div>
+      <div class="v-stage" style="flex-direction:column; justify-content:center; gap:0;">
+        <div class="flow-list">
+          <div class="flow-row">
+            <div class="fi"><i data-lucide="route"></i></div>
+            <div><div class="ft">Driver sets route</div><div class="fsub">EV profile, destination, target charge.</div></div>
+            <div class="fn">01</div>
+          </div>
+          <div class="flow-row">
+            <div class="fi"><i data-lucide="map-pinned"></i></div>
+            <div><div class="ft">App ranks stops</div><div class="fsub">Compatible plugs, detour, speed.</div></div>
+            <div class="fn">02</div>
+          </div>
+          <div class="flow-row">
+            <div class="fi"><i data-lucide="calendar-check"></i></div>
+            <div><div class="ft">Driver reserves</div><div class="fsub">Duration, estimate, start OTP.</div></div>
+            <div class="fn">03</div>
+          </div>
+          <div class="flow-row host">
+            <div class="fi"><i data-lucide="home"></i></div>
+            <div><div class="ft">Host accepts</div><div class="fsub">Live request with payout.</div></div>
+            <div class="fn">04</div>
+          </div>
+          <div class="flow-row host">
+            <div class="fi"><i data-lucide="gauge"></i></div>
+            <div><div class="ft">Charge &amp; settle</div><div class="fsub">Live metering, host payout.</div></div>
+            <div class="fn">05</div>
+          </div>
+        </div>
+        <div class="v-outcomes">
+          <div class="outcome-card demand">
+            <i data-lucide="navigation"></i>
+            <div><div class="oc-t">Driver</div><div class="oc-d">A guaranteed place to plug in, at a fair price.</div></div>
+          </div>
+          <div class="outcome-card supply">
+            <i data-lucide="home"></i>
+            <div><div class="oc-t">Host</div><div class="oc-d">Income from the charger you already own.</div></div>
+          </div>
+        </div>
+      </div>
+      <div class="v-chips">
+        <span class="chip"><i data-lucide="navigation"></i> Charge anywhere</span>
+        <span class="chip orange"><i data-lucide="home"></i> Earn from your wallbox</span>
+      </div>
+    </section>
+
+    <!-- ============ 9 · CLOSE ============ -->
+    <section class="vslide" id="v-9">
+      <div class="v-head" style="padding-top:180px">
+        <div class="v-eyebrow"><span class="dot"></span> ChargeKaro</div>
+        <h2 style="margin-top:30px">The grid is already<br>in the <span class="accent">driveway.</span></h2>
+        <div class="close-tag">Charge anywhere · Share everywhere</div>
+      </div>
+      <div class="v-stage">
+        <div class="cover-phones" style="transform:scale(.94); transform-origin:top center;">
+          <div class="phone-wrap back"><img class="phone" style="--w:470px" src="assets/host-dashboard.png" alt="Host dashboard"></div>
+          <div class="phone-wrap front"><img class="phone" style="--w:545px" src="assets/driver-map.png" alt="Driver map"></div>
+        </div>
+      </div>
+      <div class="v-chips">
+        <span class="chip"><i data-lucide="zap"></i> chargekaro.app</span>
+      </div>
+    </section>
+
+  </div>
+
+  <script>
+    if (window.lucide) lucide.createIcons();
+  </script>
+</body>
+</html>

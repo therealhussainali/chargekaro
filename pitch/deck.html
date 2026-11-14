@@ -1,0 +1,697 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ChargeKaro — Pitch Deck</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg: #08090C;
+      --surface: #10131A;
+      --surface-2: #141821;
+      --line: rgba(255,255,255,.075);
+      --yellow: #FFD54A;
+      --orange: #FF7A45;
+      --green: #34D399;
+      --muted: #98A2B3;
+      --dim: #6B7486;
+    }
+    html { -webkit-font-smoothing: antialiased; }
+    body {
+      background: #050608;
+      color: #E8EBF2;
+      font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
+    }
+    .deck { display: flex; flex-direction: column; align-items: center; gap: 28px; padding: 28px; }
+    .slide {
+      position: relative;
+      width: 1600px;
+      height: 900px;
+      overflow: hidden;
+      background: var(--bg);
+      border-radius: 10px;
+      isolation: isolate;
+    }
+    .slide::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(55% 55% at 12% 0%, rgba(255,213,74,.09), transparent 62%),
+        radial-gradient(45% 50% at 92% 100%, rgba(255,122,69,.08), transparent 62%);
+      pointer-events: none;
+    }
+    .slide::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(255,255,255,.024) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,.024) 1px, transparent 1px);
+      background-size: 64px 64px;
+      -webkit-mask-image: radial-gradient(circle at 50% 38%, #000 0%, transparent 78%);
+      mask-image: radial-gradient(circle at 50% 38%, #000 0%, transparent 78%);
+      pointer-events: none;
+    }
+    .slide > * { position: relative; z-index: 1; }
+    .pad { position: absolute; inset: 0; padding: 60px 84px 60px; }
+
+    .slide-top {
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .brandline { display: flex; align-items: center; gap: 12px; }
+    .brandmark {
+      width: 38px; height: 38px; border-radius: 12px;
+      display: flex; align-items: center; justify-content: center;
+      background: var(--yellow); color: #0B0D11;
+      box-shadow: 0 10px 26px -8px rgba(255,213,74,.6);
+    }
+    .brandmark i { width: 19px; height: 19px; stroke-width: 2.6; }
+    .brandname { font-family: 'Space Grotesk', sans-serif; font-size: 19px; font-weight: 700; letter-spacing: -.02em; }
+    .brandname span { color: var(--yellow); }
+    .slide-num { font-family: 'Space Grotesk', sans-serif; font-size: 12px; letter-spacing: .18em; color: var(--dim); }
+
+    .eyebrow {
+      font-size: 12px; font-weight: 800; letter-spacing: .2em; text-transform: uppercase;
+      color: var(--yellow); display: flex; align-items: center; gap: 10px;
+    }
+    .eyebrow.orange { color: var(--orange); }
+    .eyebrow .dot { width: 6px; height: 6px; border-radius: 50%; background: currentColor; }
+
+    h1 {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 74px; line-height: .96; letter-spacing: -.035em; font-weight: 700;
+      text-wrap: balance;
+    }
+    h2 {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 52px; line-height: 1.02; letter-spacing: -.03em; font-weight: 700;
+      text-wrap: balance;
+    }
+    .lede { font-size: 18px; line-height: 1.6; color: #A9B2C3; }
+    .small { font-size: 13px; line-height: 1.55; color: var(--muted); }
+    .mono { font-family: 'Space Grotesk', monospace; }
+
+    .slide-foot {
+      position: absolute; left: 84px; right: 84px; bottom: 28px;
+      display: flex; align-items: center; justify-content: space-between;
+      font-size: 11px; color: #5B6475; letter-spacing: .04em;
+    }
+    .slide-foot strong { color: #8B94A5; font-weight: 600; }
+
+    /* ---------- Phone ---------- */
+    .phone-wrap { position: relative; }
+    .phone-wrap::before {
+      content: '';
+      position: absolute; inset: 8% -18% 4%;
+      background: radial-gradient(ellipse at center, rgba(255,213,74,.18), rgba(255,122,69,.06) 45%, transparent 70%);
+      filter: blur(42px);
+      z-index: -1;
+    }
+    .phone {
+      display: block; width: var(--w, 280px); height: auto;
+      border-radius: 40px;
+      box-shadow: 0 40px 90px -28px rgba(0,0,0,.9);
+    }
+    .phone-label {
+      margin-top: 18px; text-align: center;
+      font-size: 11px; font-weight: 800; letter-spacing: .16em; text-transform: uppercase;
+      color: var(--dim);
+    }
+    .phone-label span { color: var(--yellow); }
+    .phone-label.orange span { color: var(--orange); }
+
+    .float-card {
+      position: absolute; z-index: 4;
+      background: rgba(15,18,25,.92);
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      padding: 14px 16px;
+      box-shadow: 0 20px 50px -18px rgba(0,0,0,.8);
+      backdrop-filter: blur(14px);
+    }
+    .float-card .fc-label { font-size: 10px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; color: var(--dim); }
+    .float-card .fc-value { margin-top: 4px; font-family: 'Space Grotesk', sans-serif; font-size: 22px; font-weight: 700; line-height: 1; }
+    .float-card .fc-sub { margin-top: 5px; font-size: 10px; color: var(--muted); }
+    .float-card.yellow .fc-value { color: var(--yellow); }
+    .float-card.orange .fc-value { color: var(--orange); }
+    .float-card.green .fc-value { color: var(--green); }
+
+    /* ---------- Cards ---------- */
+    .card {
+      background: linear-gradient(180deg, rgba(20,24,33,.95), rgba(13,16,22,.95));
+      border: 1px solid var(--line);
+      border-radius: 22px;
+    }
+    .role-card { padding: 24px 26px; }
+    .role-head { display: flex; align-items: center; gap: 12px; }
+    .role-icon {
+      width: 40px; height: 40px; border-radius: 12px; display: flex; align-items: center; justify-content: center;
+      background: rgba(255,213,74,.12); color: var(--yellow);
+    }
+    .role-icon.orange { background: rgba(255,122,69,.12); color: var(--orange); }
+    .role-icon i { width: 20px; height: 20px; }
+    .role-title { font-size: 16px; font-weight: 800; }
+    .role-kicker { font-size: 10px; font-weight: 800; letter-spacing: .16em; text-transform: uppercase; color: var(--dim); }
+    .bullets { margin-top: 16px; display: grid; gap: 10px; }
+    .bullet { display: flex; gap: 10px; font-size: 13px; line-height: 1.45; color: #B7BFCE; }
+    .bullet i { width: 15px; height: 15px; flex: none; margin-top: 2px; color: var(--green); }
+
+    .step-badge {
+      width: 30px; height: 30px; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-family: 'Space Grotesk', sans-serif; font-size: 12px; font-weight: 700;
+      background: rgba(255,213,74,.14); color: var(--yellow); border: 1px solid rgba(255,213,74,.28);
+    }
+    .step-badge.orange { background: rgba(255,122,69,.14); color: var(--orange); border-color: rgba(255,122,69,.28); }
+
+    .pill {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 9px 14px; border-radius: 999px;
+      border: 1px solid var(--line); background: rgba(16,19,26,.75);
+      font-size: 11px; font-weight: 700; color: #B9C2D1;
+    }
+    .pill i { width: 14px; height: 14px; color: var(--yellow); }
+    .pill.orange i { color: var(--orange); }
+
+    .stat {
+      padding: 18px 20px; border-radius: 18px;
+      background: rgba(16,19,26,.9); border: 1px solid var(--line);
+    }
+    .stat .s-label { font-size: 10px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; color: var(--dim); }
+    .stat .s-value { margin-top: 6px; font-family: 'Space Grotesk', sans-serif; font-size: 26px; font-weight: 700; line-height: 1; }
+    .stat .s-sub { margin-top: 6px; font-size: 10px; color: var(--muted); }
+    .stat.yellow .s-value { color: var(--yellow); }
+    .stat.orange .s-value { color: var(--orange); }
+    .stat.green .s-value { color: var(--green); }
+
+    /* ---------- Cover ---------- */
+    .cover-grid { position: absolute; inset: 0; display: grid; grid-template-columns: 1.02fr .98fr; }
+    .cover-copy { padding: 88px 0 80px 84px; display: flex; flex-direction: column; justify-content: center; }
+    .cover-copy h1 { margin-top: 22px; }
+    .cover-copy .lede { margin-top: 24px; max-width: 560px; }
+    .cover-pills { margin-top: 30px; display: flex; gap: 10px; flex-wrap: wrap; }
+    .cover-art { position: relative; }
+    .cover-phone-back { position: absolute; right: 54px; top: 138px; transform: rotate(6deg); opacity: .78; }
+    .cover-phone-front { position: absolute; right: 292px; top: 196px; transform: rotate(-3deg); }
+    .cover-stat-1 { right: 44px; top: 102px; }
+    .cover-stat-2 { left: 18px; bottom: 130px; }
+
+    /* ---------- Two sides ---------- */
+    .two-grid { position: absolute; inset: 0; display: grid; grid-template-columns: .9fr 1.1fr; }
+    .two-copy { padding: 84px 0 0 84px; }
+    .two-copy h2 { margin-top: 18px; }
+    .two-copy .lede { margin-top: 18px; max-width: 500px; }
+    .two-roles { margin-top: 26px; display: grid; gap: 14px; max-width: 520px; }
+    .two-phones { display: flex; align-items: center; justify-content: center; gap: 54px; padding-top: 86px; }
+    .two-phone { text-align: center; }
+
+    /* ---------- Walkthrough ---------- */
+    .walk-head { display: flex; align-items: flex-end; justify-content: space-between; gap: 40px; }
+    .walk-head h2 { max-width: 840px; font-size: 46px; }
+    .walk-head .lede { max-width: 400px; text-align: right; font-size: 14px; }
+    .walk-row { margin-top: 26px; display: grid; grid-template-columns: repeat(3, 1fr); gap: 60px; }
+    .walk-item { display: flex; flex-direction: column; align-items: center; }
+    .walk-item .phone { width: 224px; }
+    .walk-caption { margin-top: 12px; text-align: center; max-width: 300px; }
+    .walk-caption .wc-title { margin-top: 6px; font-size: 14px; font-weight: 800; }
+    .walk-caption .wc-text { margin-top: 5px; font-size: 11.5px; line-height: 1.5; color: var(--muted); }
+    .walk-strip { margin-top: 16px; display: flex; justify-content: center; gap: 9px; flex-wrap: wrap; }
+    .walk-strip .pill { padding: 7px 12px; font-size: 10.5px; }
+
+    /* ---------- Flow ---------- */
+    .flow-head { text-align: center; }
+    .flow-head h2 { margin-top: 16px; }
+    .flow-head .lede { margin: 14px auto 0; max-width: 680px; text-align: center; }
+    .flow-line { position: relative; margin-top: 56px; display: grid; grid-template-columns: repeat(5, 1fr); gap: 18px; }
+    .flow-line::before {
+      content: ''; position: absolute; left: 9%; right: 9%; top: 34px; height: 1px;
+      background: linear-gradient(90deg, rgba(255,213,74,.5), rgba(255,122,69,.5));
+    }
+    .flow-step { position: relative; text-align: center; }
+    .flow-icon {
+      width: 68px; height: 68px; margin: 0 auto; border-radius: 20px;
+      display: flex; align-items: center; justify-content: center;
+      background: #10131A; border: 1px solid rgba(255,213,74,.25); color: var(--yellow);
+      box-shadow: 0 14px 34px -14px rgba(255,213,74,.35);
+    }
+    .flow-step:nth-child(4) .flow-icon, .flow-step:nth-child(5) .flow-icon { border-color: rgba(255,122,69,.28); color: var(--orange); box-shadow: 0 14px 34px -14px rgba(255,122,69,.35); }
+    .flow-icon i { width: 28px; height: 28px; }
+    .flow-step .fs-num { margin-top: 12px; font-family: 'Space Grotesk', sans-serif; font-size: 11px; letter-spacing: .16em; color: var(--dim); }
+    .flow-step .fs-title { margin-top: 4px; font-size: 14px; font-weight: 800; }
+    .flow-step .fs-text { margin-top: 5px; font-size: 11px; line-height: 1.5; color: var(--muted); }
+    .flow-outcomes { margin-top: 46px; display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+    .outcome { padding: 20px 24px; display: flex; gap: 16px; align-items: flex-start; }
+    .outcome .oi { width: 40px; height: 40px; border-radius: 12px; display: flex; align-items: center; justify-content: center; flex: none; }
+    .outcome .oi i { width: 20px; height: 20px; }
+    .outcome.demand .oi { background: rgba(255,213,74,.12); color: var(--yellow); }
+    .outcome.supply .oi { background: rgba(255,122,69,.12); color: var(--orange); }
+    .outcome .ot { font-size: 10px; font-weight: 800; letter-spacing: .16em; text-transform: uppercase; color: var(--dim); }
+    .outcome .ov { margin-top: 5px; font-size: 15px; line-height: 1.45; font-weight: 700; }
+    .flow-metrics { margin-top: 30px; display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+    .flow-metric {
+      display: flex; align-items: center; gap: 14px; padding: 14px 20px;
+      border: 1px solid var(--line); border-radius: 16px; background: rgba(16,19,26,.7);
+    }
+    .flow-metric .fm-value { font-family: 'Space Grotesk', sans-serif; font-size: 24px; font-weight: 700; line-height: 1; }
+    .flow-metric .fm-label { font-size: 10.5px; line-height: 1.4; color: var(--muted); }
+    .flow-metric.yellow .fm-value { color: var(--yellow); }
+    .flow-metric.orange .fm-value { color: var(--orange); }
+    .flow-metric.green .fm-value { color: var(--green); }
+
+    /* ---------- Economics ---------- */
+    .econ-grid { position: absolute; inset: 0; display: grid; grid-template-columns: 1.08fr .92fr; }
+    .econ-copy { padding: 84px 0 0 84px; }
+    .econ-copy h2 { margin-top: 18px; }
+    .econ-copy .lede { margin-top: 18px; max-width: 560px; }
+    .econ-bar { margin-top: 30px; max-width: 620px; }
+    .bar-track { height: 34px; border-radius: 10px; overflow: hidden; display: flex; border: 1px solid var(--line); }
+    .bar-grid { width: 62%; background: linear-gradient(90deg, #2A303D, #343B4B); }
+    .bar-margin { width: 38%; background: linear-gradient(90deg, #FF7A45, #FFD54A); }
+    .bar-labels { margin-top: 10px; display: flex; justify-content: space-between; font-size: 10px; color: var(--dim); }
+    .bar-labels strong { color: #C6CEDB; }
+    .econ-stats { margin-top: 24px; display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; max-width: 620px; }
+    .econ-save {
+      margin-top: 18px; max-width: 620px; display: flex; align-items: center; gap: 16px;
+      padding: 16px 20px; border-radius: 16px;
+      border: 1px solid rgba(52,211,153,.22);
+      background: linear-gradient(90deg, rgba(52,211,153,.1), rgba(52,211,153,.02));
+    }
+    .econ-save .es-icon {
+      width: 40px; height: 40px; border-radius: 12px; flex: none;
+      display: flex; align-items: center; justify-content: center;
+      background: rgba(52,211,153,.14); color: var(--green);
+    }
+    .econ-save .es-icon i { width: 20px; height: 20px; }
+    .econ-save .es-value { font-family: 'Space Grotesk', sans-serif; font-size: 20px; font-weight: 700; color: var(--green); line-height: 1; }
+    .econ-save .es-label { margin-top: 5px; font-size: 10.5px; line-height: 1.45; color: var(--muted); }
+    .econ-note { margin-top: 18px; max-width: 560px; font-size: 10px; line-height: 1.6; color: #5E6778; }
+    .econ-art { position: relative; display: flex; align-items: center; justify-content: center; padding-top: 50px; }
+    .econ-art .phone { width: 320px; }
+    .econ-float { left: 6px; bottom: 138px; }
+
+    /* ---------- Close ---------- */
+    .close-wrap { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: flex-start; text-align: center; padding: 92px 120px 0; }
+    .close-wrap h1 { margin-top: 20px; max-width: 1100px; font-size: 70px; }
+    .close-wrap .lede { margin-top: 22px; max-width: 700px; text-align: center; font-size: 18px; }
+    .close-pills { margin-top: 26px; display: flex; gap: 12px; }
+    .close-phones { position: absolute; bottom: 52px; left: 50%; transform: translateX(-50%); display: flex; gap: 64px; opacity: .92; }
+    .close-phones .phone { width: 250px; }
+
+    .accent { color: var(--yellow); }
+    .accent-orange { color: var(--orange); }
+    .accent-green { color: var(--green); }
+  </style>
+</head>
+<body>
+  <div class="deck">
+
+    <!-- ================= SLIDE 1 · COVER ================= -->
+    <section class="slide" id="slide-1">
+      <div class="cover-grid">
+        <div class="cover-copy">
+          <div class="brandline">
+            <div class="brandmark"><i data-lucide="zap"></i></div>
+            <div class="brandname">Charge<span>Karo</span></div>
+          </div>
+          <div class="eyebrow" style="margin-top:34px"><span class="dot"></span> Peer-to-peer EV charging · 2026</div>
+          <h1>Every driveway<br>becomes a<br><span class="accent">charging station.</span></h1>
+          <p class="lede">ChargeKaro connects EV drivers with trusted neighbourhood hosts — turning idle home chargers into income and range anxiety into a 20-minute stop.</p>
+          <div class="cover-pills">
+            <span class="pill"><i data-lucide="navigation"></i> Demand side · Drivers</span>
+            <span class="pill orange"><i data-lucide="home"></i> Supply side · Hosts</span>
+            <span class="pill"><i data-lucide="map"></i> Live product demo</span>
+          </div>
+        </div>
+        <div class="cover-art">
+          <div class="phone-wrap cover-phone-back"><img class="phone" style="--w:300px" src="assets/host-dashboard.png" alt="Host dashboard"></div>
+          <div class="phone-wrap cover-phone-front"><img class="phone" style="--w:330px" src="assets/driver-map.png" alt="Driver map"></div>
+          <div class="float-card yellow cover-stat-1">
+            <div class="fc-label">Host earnings</div>
+            <div class="fc-value">₨38,450</div>
+            <div class="fc-sub">November · 854 kWh sold</div>
+          </div>
+          <div class="float-card green cover-stat-2">
+            <div class="fc-label">Nearest charger</div>
+            <div class="fc-value">2.2 km</div>
+            <div class="fc-sub">11 kW · Type 2 · ₨42/kWh</div>
+          </div>
+        </div>
+      </div>
+      <div class="slide-foot">
+        <span><strong>ChargeKaro</strong> · Peer-to-peer EV charging</span>
+        <span>01 · Cover</span>
+      </div>
+    </section>
+
+    <!-- ================= SLIDE 2 · TWO SIDES ================= -->
+    <section class="slide" id="slide-2">
+      <div class="two-grid">
+        <div class="two-copy">
+          <div class="eyebrow"><span class="dot"></span> One network · two winners</div>
+          <h2>One network.<br>Two sides.<br><span class="accent">Both win.</span></h2>
+          <p class="lede">A driver needs range. A host already has the plug. ChargeKaro is the trust layer, the scheduler and the meter between them.</p>
+
+          <div class="two-roles">
+            <div class="card role-card">
+              <div class="role-head">
+                <div class="role-icon"><i data-lucide="navigation"></i></div>
+                <div>
+                  <div class="role-kicker">Demand side</div>
+                  <div class="role-title">Drivers</div>
+                </div>
+              </div>
+              <div class="bullets">
+                <div class="bullet"><i data-lucide="check-circle-2"></i><span>Plan a route and see compatible stops ranked by detour, speed and availability.</span></div>
+                <div class="bullet"><i data-lucide="check-circle-2"></i><span>Compare kW, connector, tariff and amenities before booking.</span></div>
+                <div class="bullet"><i data-lucide="check-circle-2"></i><span>Reserve a slot, share an OTP and watch energy and fare update live.</span></div>
+              </div>
+            </div>
+
+            <div class="card role-card">
+              <div class="role-head">
+                <div class="role-icon orange"><i data-lucide="home"></i></div>
+                <div>
+                  <div class="role-kicker">Supply side</div>
+                  <div class="role-title">Hosts</div>
+                </div>
+              </div>
+              <div class="bullets">
+                <div class="bullet"><i data-lucide="check-circle-2"></i><span>Publish an existing wallbox with power, plug type and guest amenities.</span></div>
+                <div class="bullet"><i data-lucide="check-circle-2"></i><span>Set your tariff, availability window and the drivers you accept.</span></div>
+                <div class="bullet"><i data-lucide="check-circle-2"></i><span>Track earnings, energy sold and a charger ROI simulator in one place.</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="two-phones">
+          <div class="two-phone">
+            <div class="phone-wrap"><img class="phone" style="--w:238px" src="assets/driver-detail.png" alt="Driver station detail"></div>
+            <div class="phone-label"><span>Demand</span> · Driver</div>
+          </div>
+          <div class="two-phone">
+            <div class="phone-wrap"><img class="phone" style="--w:238px" src="assets/host-dashboard.png" alt="Host dashboard"></div>
+            <div class="phone-label orange"><span>Supply</span> · Host</div>
+          </div>
+        </div>
+      </div>
+      <div class="slide-foot">
+        <span><strong>ChargeKaro</strong> · Two-sided marketplace</span>
+        <span>02 · The opportunity</span>
+      </div>
+    </section>
+
+    <!-- ================= SLIDE 3 · DEMAND WALKTHROUGH ================= -->
+    <section class="slide" id="slide-3">
+      <div class="pad">
+        <div class="slide-top">
+          <div class="brandline"><div class="brandmark"><i data-lucide="zap"></i></div><div class="brandname">Charge<span>Karo</span></div></div>
+          <div class="slide-num">03 · DEMAND SIDE</div>
+        </div>
+
+        <div class="walk-head" style="margin-top:34px">
+          <div>
+            <div class="eyebrow"><span class="dot"></span> The driver experience</div>
+            <h2 style="margin-top:14px">From low battery to<br><span class="accent">booked in under a minute.</span></h2>
+          </div>
+          <p class="lede">Built around range confidence — not endless browsing. Every step answers: can I get there, what will it cost, and is the plug free?</p>
+        </div>
+
+        <div class="walk-row">
+          <div class="walk-item">
+            <div class="step-badge">1</div>
+            <div class="phone-wrap" style="margin-top:14px"><img class="phone" src="assets/driver-map.png" alt="Plan route and see compatible chargers"></div>
+            <div class="walk-caption">
+              <div class="wc-title">Set the route</div>
+              <div class="wc-text">Add your EV and destination. ChargeKaro ranks compatible stops along the way.</div>
+            </div>
+          </div>
+
+          <div class="walk-item">
+            <div class="step-badge">2</div>
+            <div class="phone-wrap" style="margin-top:14px"><img class="phone" src="assets/driver-detail.png" alt="Compare and reserve a charger"></div>
+            <div class="walk-caption">
+              <div class="wc-title">Compare and reserve</div>
+              <div class="wc-text">Power, plug, tariff, amenities and an instant energy and cost estimate.</div>
+            </div>
+          </div>
+
+          <div class="walk-item">
+            <div class="step-badge">3</div>
+            <div class="phone-wrap" style="margin-top:14px"><img class="phone" src="assets/driver-charging.png" alt="Charge with live metering"></div>
+            <div class="walk-caption">
+              <div class="wc-title">Charge with confidence</div>
+              <div class="wc-text">A one-time OTP starts the session. Energy and fare meter live until you stop.</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="walk-strip">
+          <span class="pill"><i data-lucide="map"></i> Live map</span>
+          <span class="pill"><i data-lucide="plug-zap"></i> EV-aware compatibility</span>
+          <span class="pill"><i data-lucide="shield-check"></i> OTP handoff</span>
+          <span class="pill"><i data-lucide="gauge"></i> Live metering</span>
+        </div>
+      </div>
+      <div class="slide-foot">
+        <span><strong>Demand side</strong> · Driver walkthrough</span>
+        <span>03 · Find · Reserve · Charge</span>
+      </div>
+    </section>
+
+    <!-- ================= SLIDE 4 · SUPPLY WALKTHROUGH ================= -->
+    <section class="slide" id="slide-4">
+      <div class="pad">
+        <div class="slide-top">
+          <div class="brandline"><div class="brandmark"><i data-lucide="zap"></i></div><div class="brandname">Charge<span>Karo</span></div></div>
+          <div class="slide-num">04 · SUPPLY SIDE</div>
+        </div>
+
+        <div class="walk-head" style="margin-top:34px">
+          <div>
+            <div class="eyebrow orange"><span class="dot"></span> The host experience</div>
+            <h2 style="margin-top:14px">Your wallbox earns<br><span class="accent-orange">while you sleep.</span></h2>
+          </div>
+          <p class="lede">An existing asset becomes a small business. Hosts stay in control of price, hours and who gets access.</p>
+        </div>
+
+        <div class="walk-row">
+          <div class="walk-item">
+            <div class="step-badge orange">1</div>
+            <div class="phone-wrap" style="margin-top:14px"><img class="phone" src="assets/host-dashboard.png" alt="Host earnings dashboard"></div>
+            <div class="walk-caption">
+              <div class="wc-title">See the upside</div>
+              <div class="wc-text">Earnings, energy sold, rating and a charger ROI simulator in one view.</div>
+            </div>
+          </div>
+
+          <div class="walk-item">
+            <div class="step-badge orange">2</div>
+            <div class="phone-wrap" style="margin-top:14px"><img class="phone" src="assets/host-setup.png" alt="Configure charger specs"></div>
+            <div class="walk-caption">
+              <div class="wc-title">Stay in control</div>
+              <div class="wc-text">Set kW, tariff, hours and amenities. Drivers only see what you publish.</div>
+            </div>
+          </div>
+
+          <div class="walk-item">
+            <div class="step-badge orange">3</div>
+            <div class="phone-wrap" style="margin-top:14px"><img class="phone" src="assets/host-request.png" alt="Accept an incoming driver request"></div>
+            <div class="walk-caption">
+              <div class="wc-title">Accept demand</div>
+              <div class="wc-text">A live request shows the driver, energy and payout. Accept or decline.</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="walk-strip">
+          <span class="pill orange"><i data-lucide="wallet"></i> Earnings dashboard</span>
+          <span class="pill orange"><i data-lucide="calculator"></i> ROI simulator</span>
+          <span class="pill orange"><i data-lucide="sliders-horizontal"></i> Tariff control</span>
+          <span class="pill orange"><i data-lucide="bell-ring"></i> Accept / decline</span>
+        </div>
+      </div>
+      <div class="slide-foot">
+        <span><strong>Supply side</strong> · Host walkthrough</span>
+        <span>04 · List · Earn · Manage</span>
+      </div>
+    </section>
+
+    <!-- ================= SLIDE 5 · HOW IT WORKS ================= -->
+    <section class="slide" id="slide-5">
+      <div class="pad">
+        <div class="slide-top">
+          <div class="brandline"><div class="brandmark"><i data-lucide="zap"></i></div><div class="brandname">Charge<span>Karo</span></div></div>
+          <div class="slide-num">05 · THE FLOW</div>
+        </div>
+
+        <div class="flow-head" style="margin-top:104px">
+          <div class="eyebrow" style="justify-content:center"><span class="dot"></span> End-to-end</div>
+          <h2>How a charge happens.</h2>
+          <p class="lede">One flow connects a driver’s route, a host’s calendar and a live meter — with a verified handoff at the driveway.</p>
+        </div>
+
+        <div class="flow-line">
+          <div class="flow-step">
+            <div class="flow-icon"><i data-lucide="route"></i></div>
+            <div class="fs-num">STEP 01</div>
+            <div class="fs-title">Driver sets route</div>
+            <div class="fs-text">EV profile, destination and target charge.</div>
+          </div>
+          <div class="flow-step">
+            <div class="flow-icon"><i data-lucide="map-pinned"></i></div>
+            <div class="fs-num">STEP 02</div>
+            <div class="fs-title">App ranks stops</div>
+            <div class="fs-text">Compatible plugs, detour, speed and availability.</div>
+          </div>
+          <div class="flow-step">
+            <div class="flow-icon"><i data-lucide="calendar-check"></i></div>
+            <div class="fs-num">STEP 03</div>
+            <div class="fs-title">Reserve a slot</div>
+            <div class="fs-text">Duration, instant estimate and a start OTP.</div>
+          </div>
+          <div class="flow-step">
+            <div class="flow-icon"><i data-lucide="home"></i></div>
+            <div class="fs-num">STEP 04</div>
+            <div class="fs-title">Host accepts</div>
+            <div class="fs-text">Live request with driver, energy and payout.</div>
+          </div>
+          <div class="flow-step">
+            <div class="flow-icon"><i data-lucide="gauge"></i></div>
+            <div class="fs-num">STEP 05</div>
+            <div class="fs-title">Charge & settle</div>
+            <div class="fs-text">Live metering, fare accrued and host payout.</div>
+          </div>
+        </div>
+
+        <div class="flow-outcomes">
+          <div class="card outcome demand">
+            <div class="oi"><i data-lucide="navigation"></i></div>
+            <div>
+              <div class="ot">Driver outcome</div>
+              <div class="ov">Range confidence, a transparent price and a guaranteed place to plug in.</div>
+            </div>
+          </div>
+          <div class="card outcome supply">
+            <div class="oi"><i data-lucide="home"></i></div>
+            <div>
+              <div class="ot">Host outcome</div>
+              <div class="ov">New income from an asset that already exists — with full control over access.</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="flow-metrics">
+          <div class="flow-metric yellow">
+            <div class="fm-value">20 min</div>
+            <div class="fm-label">Typical top-up on an 11 kW home wallbox</div>
+          </div>
+          <div class="flow-metric orange">
+            <div class="fm-value">₨17/kWh</div>
+            <div class="fm-label">Host margin over grid cost, set by the host</div>
+          </div>
+          <div class="flow-metric green">
+            <div class="fm-value">&lt; 60 sec</div>
+            <div class="fm-label">From opening the app to a confirmed slot</div>
+          </div>
+        </div>
+      </div>
+      <div class="slide-foot">
+        <span><strong>ChargeKaro</strong> · One flow, both sides</span>
+        <span>05 · Route → Reserve → Charge → Settle</span>
+      </div>
+    </section>
+
+    <!-- ================= SLIDE 6 · ECONOMICS ================= -->
+    <section class="slide" id="slide-6">
+      <div class="econ-grid">
+        <div class="econ-copy">
+          <div class="eyebrow orange"><span class="dot"></span> Unit economics</div>
+          <h2>Designed to<br><span class="accent-orange">pay for itself.</span></h2>
+          <p class="lede">The host sells at a premium to grid cost. The driver pays less than public fast charging — and both sides see the number before they commit.</p>
+
+          <div class="econ-bar">
+            <div class="bar-track">
+              <div class="bar-grid"></div>
+              <div class="bar-margin"></div>
+            </div>
+            <div class="bar-labels">
+              <span><strong>₨28</strong> grid cost</span>
+              <span><strong>₨17</strong> host margin</span>
+              <span><strong>₨45</strong> driver pays</span>
+            </div>
+          </div>
+
+          <div class="econ-stats">
+            <div class="stat yellow"><div class="s-label">Break-even</div><div class="s-value">8.5 mo</div><div class="s-sub">Illustrative · ₨350k install</div></div>
+            <div class="stat orange"><div class="s-label">Host earned</div><div class="s-value">₨38.4k</div><div class="s-sub">November · 854 kWh</div></div>
+            <div class="stat green"><div class="s-label">Host rating</div><div class="s-value">4.98★</div><div class="s-sub">48 completed charges</div></div>
+          </div>
+
+          <div class="econ-save">
+            <div class="es-icon"><i data-lucide="piggy-bank"></i></div>
+            <div>
+              <div class="es-value">Drivers save ~₨2,000</div>
+              <div class="es-label">On a 40 kWh top-up versus public DC fast charging — with a guaranteed, pre-booked plug.</div>
+            </div>
+          </div>
+
+          <p class="econ-note">Illustrative only, based on the demo dataset and 1,400 kWh/month of solar surplus. Final lending eligibility, rate and approval require a lender assessment.</p>
+        </div>
+
+        <div class="econ-art">
+          <div class="phone-wrap"><img class="phone" src="assets/host-dashboard.png" alt="Host earnings and ROI"></div>
+          <div class="float-card orange econ-float">
+            <div class="fc-label">Host payout / kWh</div>
+            <div class="fc-value">₨17</div>
+            <div class="fc-sub">Margin over grid cost</div>
+          </div>
+        </div>
+      </div>
+      <div class="slide-foot">
+        <span><strong>ChargeKaro</strong> · Host economics</span>
+        <span>06 · Why it works</span>
+      </div>
+    </section>
+
+    <!-- ================= SLIDE 7 · CLOSE ================= -->
+    <section class="slide" id="slide-7">
+      <div class="slide-top" style="position:absolute;left:84px;right:84px;top:56px">
+        <div class="brandline"><div class="brandmark"><i data-lucide="zap"></i></div><div class="brandname">Charge<span>Karo</span></div></div>
+        <div class="slide-num">07 · CLOSING</div>
+      </div>
+
+      <div class="close-wrap">
+        <div class="eyebrow"><span class="dot"></span> The opportunity</div>
+        <h1>The grid is already<br>in the <span class="accent">driveway.</span></h1>
+        <p class="lede">ChargeKaro turns idle home chargers into a trusted, bookable network — and gives drivers a reliable place to plug in.</p>
+        <div class="close-pills">
+          <span class="pill"><i data-lucide="navigation"></i> For drivers · charge anywhere</span>
+          <span class="pill orange"><i data-lucide="home"></i> For hosts · earn from the asset you own</span>
+        </div>
+      </div>
+
+      <div class="close-phones">
+        <div class="phone-wrap"><img class="phone" src="assets/driver-map.png" alt="Driver map"></div>
+        <div class="phone-wrap"><img class="phone" src="assets/host-dashboard.png" alt="Host dashboard"></div>
+      </div>
+
+      <div class="slide-foot">
+        <span><strong>ChargeKaro</strong> · Peer-to-peer EV charging · 2026</span>
+        <span>07 · Thank you</span>
+      </div>
+    </section>
+
+  </div>
+
+  <script>
+    if (window.lucide) lucide.createIcons();
+  </script>
+</body>
+</html>

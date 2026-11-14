@@ -524,7 +524,7 @@
     </aside>
 
     <!-- ======================= PHONE ======================= -->
-    <div class="relative h-[820px] w-full max-w-[520px] shrink-0 rounded-[48px] bg-black p-[10px] shadow-[0_40px_120px_-24px_rgba(0,0,0,0.95)] ring-1 ring-white/10">
+    <div id="app-phone" class="relative h-[820px] w-full max-w-[520px] shrink-0 rounded-[48px] bg-black p-[10px] shadow-[0_40px_120px_-24px_rgba(0,0,0,0.95)] ring-1 ring-white/10">
 
       <!-- Inner screen -->
       <div class="relative flex h-full w-full flex-col overflow-hidden rounded-[40px] bg-brand-dark">
@@ -566,6 +566,24 @@
                   <span><strong class="block text-sm font-extrabold text-white">I want to rent out my charger</strong><span class="mt-1 block text-[11px] leading-relaxed text-slate-400">List your charger, set your hours and welcome nearby drivers.</span></span>
                   <i data-lucide="check-circle-2" class="ml-auto h-4 w-4 shrink-0 text-brand-orange"></i>
                 </button>
+              </div>
+
+              <div class="rounded-2xl border border-white/5 bg-[#12151D] p-4">
+                <div class="text-[10px] font-bold uppercase tracking-[.14em] text-slate-500">Included with every charge</div>
+                <div class="mt-3 grid grid-cols-3 gap-2 text-center">
+                  <div>
+                    <i data-lucide="shield-check" class="mx-auto h-4 w-4 text-brand-green"></i>
+                    <div class="mt-1.5 text-[10px] font-semibold text-slate-300">Verified hosts</div>
+                  </div>
+                  <div>
+                    <i data-lucide="key-round" class="mx-auto h-4 w-4 text-brand-yellow"></i>
+                    <div class="mt-1.5 text-[10px] font-semibold text-slate-300">OTP handoff</div>
+                  </div>
+                  <div>
+                    <i data-lucide="gauge" class="mx-auto h-4 w-4 text-brand-orange"></i>
+                    <div class="mt-1.5 text-[10px] font-semibold text-slate-300">Live metering</div>
+                  </div>
+                </div>
               </div>
             </div>
 
@@ -761,11 +779,11 @@
                 </span>
                 <span>
                   <span class="block text-[13px] font-extrabold leading-tight">Find nearest charger</span>
-                  <span class="block text-[11px] font-semibold text-black/70">Tariq's 11 kW · 400 m away</span>
+                  <span id="cta-nearest-label" class="block text-[11px] font-semibold text-black/70">Tariq's 11 kW · 400 m away</span>
                 </span>
               </span>
               <span class="flex items-center gap-1 rounded-xl bg-black px-2.5 py-1.5 font-mono text-xs font-bold text-brand-yellow">
-                <span>₨42</span>
+                <span id="cta-nearest-price">₨42</span>
                 <span class="text-[10px] font-normal text-white/50">/kWh</span>
               </span>
             </button>
@@ -831,7 +849,7 @@
                 <div class="px-1">
                   <div class="text-[10px] font-semibold uppercase tracking-wide text-slate-500">Connector</div>
                   <div id="sheet-connector" class="mt-1.5 text-[13px] font-bold text-white">Type 2</div>
-                  <div class="text-[10px] text-brand-green">Mennekes</div>
+                  <div class="text-[10px] text-brand-green">IEC 62196</div>
                 </div>
                 <div class="px-1">
                   <div class="text-[10px] font-semibold uppercase tracking-wide text-slate-500">Rate</div>
@@ -889,12 +907,14 @@
                 </div>
               </div>
 
-              <!-- Book -->
+            </div>
+
+            <!-- Sticky booking action -->
+            <div class="shrink-0 border-t border-white/5 bg-[#0F1218] px-5 pb-5 pt-3">
               <button onclick="initiateBooking()" class="flex w-full items-center justify-center gap-2 rounded-2xl bg-brand-yellow py-4 text-sm font-extrabold text-black shadow-glow-yellow transition btn-press hover:bg-brand-yellowHover">
                 <i data-lucide="calendar-check" class="h-4 w-4 stroke-[2.5]"></i>
                 <span id="book-action-text">Book slot · Tariq's 11 kW</span>
               </button>
-
             </div>
           </div>
 
@@ -1038,10 +1058,10 @@
               </div>
               <div class="mt-4 grid grid-cols-2 gap-2">
                 <label class="text-[10px] font-semibold text-slate-400">Charger + install (₨)<input id="roi-investment" type="number" value="350000" oninput="updateHostFinance()" class="mt-1 w-full rounded-xl border border-white/10 bg-[#14171F] p-2.5 text-[11px] text-white"></label>
-                <label class="text-[10px] font-semibold text-slate-400">Solar surplus / month<input id="roi-solar" type="number" value="120" oninput="updateHostFinance()" class="mt-1 w-full rounded-xl border border-white/10 bg-[#14171F] p-2.5 text-[11px] text-white"></label>
+                <label class="text-[10px] font-semibold text-slate-400">Solar surplus / month<input id="roi-solar" type="number" value="1400" oninput="updateHostFinance()" class="mt-1 w-full rounded-xl border border-white/10 bg-[#14171F] p-2.5 text-[11px] text-white"></label>
               </div>
               <div class="mt-3 grid grid-cols-2 gap-2 text-center">
-                <div class="rounded-xl bg-black/25 p-2.5"><div class="text-[9px] uppercase tracking-wide text-slate-500">Break-even</div><div id="roi-breakeven" class="mt-1 font-display text-sm font-bold text-brand-yellow">8.3 months</div></div>
+                <div class="rounded-xl bg-black/25 p-2.5"><div class="text-[9px] uppercase tracking-wide text-slate-500">Break-even</div><div id="roi-breakeven" class="mt-1 font-display text-sm font-bold text-brand-yellow">8.5 months</div></div>
                 <div class="rounded-xl bg-black/25 p-2.5"><div class="text-[9px] uppercase tracking-wide text-slate-500">Indicative loan</div><div id="roi-loan" class="mt-1 font-display text-sm font-bold text-brand-orange">₨280,000</div></div>
               </div>
               <p class="mt-2 text-[9px] leading-relaxed text-slate-500">Illustrative only; final bank eligibility, rate and approval require a lender assessment.</p>
@@ -1632,6 +1652,21 @@
       return m < 1000 ? `${Math.round(m / 10) * 10} m away` : `${(m / 1000).toFixed(1)} km away`;
     }
 
+    function updateNearestCta() {
+      const label = document.getElementById('cta-nearest-label');
+      const price = document.getElementById('cta-nearest-price');
+      if (!label || !price || !APP_STATE.stations.length) return;
+
+      const nearest = APP_STATE.stations.reduce((best, st) => {
+        const d = distanceMeters(APP_STATE.userLocation, st.coords);
+        return d < best.d ? { st, d } : best;
+      }, { st: null, d: Infinity });
+
+      if (!nearest.st) return;
+      label.textContent = `${nearest.st.hostName.split(' ')[0]}'s ${nearest.st.kw} kW · ${formatDistance(nearest.d)}`;
+      price.textContent = `₨${nearest.st.pricePerKwh}`;
+    }
+
     /* ---------------- Map ---------------- */
     function initMap() {
       const mapEl = document.getElementById('driver-map');
@@ -1690,6 +1725,7 @@
 
       renderUserLocationMarker();
       renderStationMarkers(APP_STATE.stations);
+      updateNearestCta();
 
       [50, 200, 600].forEach(ms => setTimeout(() => map && map.invalidateSize(), ms));
       window.addEventListener('resize', () => map && map.invalidateSize());
@@ -2044,6 +2080,14 @@
         helper.textContent = isDriver
           ? 'Find a nearby charger, compare rates and reserve a slot.'
           : 'Manage your wallbox, availability and earnings in real time.';
+      }
+
+      // The active-booking pill belongs to the driver experience.
+      const pill = document.getElementById('top-reservation-pill');
+      if (pill) {
+        const showPill = isDriver && !!APP_STATE.activeBooking;
+        pill.classList.toggle('hidden', !showPill);
+        pill.classList.toggle('flex', showPill);
       }
 
       if (isDriver && map) setTimeout(() => map.invalidateSize(), 160);
